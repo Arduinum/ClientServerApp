@@ -49,10 +49,8 @@ def get_port(conf_name=name):
         exit(1)
 
 
-def work_server(conf_name=name, command=None):
+def work_server(conf_name=name):
     """Отвечает за запуск и работу сервера"""
-    if command == 'test':
-        conf_name = '.' + conf_name
     conf = read_conf(conf_name)
     server_sock = socket(AF_INET, SOCK_STREAM)  # создаём сокет TCP
     server_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)  # задаём опции для сокета

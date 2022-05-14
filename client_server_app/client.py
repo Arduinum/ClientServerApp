@@ -30,8 +30,11 @@ def response_analysis(message, conf_name=name):
     raise ValueError
 
 
-def get_answer(serv_sock):
+def get_answer(serv_sock, conf_name=None):
+    """Функция для получения ответа от сервера в правильной кодировке"""
     try:
+        if conf_name is not None:
+            return response_analysis(get_message(serv_sock, conf_name=conf_name), conf_name=conf_name)
         return response_analysis(get_message(serv_sock))
     except (ValueError, JSONDecodeError):
         return 'Провал декодирования сообщения сервера!'
@@ -53,10 +56,8 @@ def data_connect_serv(conf_name=name):
         exit(1)
 
 
-def work_client(conf_name=name, command=None):
+def work_client(conf_name=name):
     """Отвечает за запуск и работу клиента"""
-    if command == 'test':
-        conf_name = '.' + conf_name
     server_sock = socket(AF_INET, SOCK_STREAM)  # создаём сокет TCP
     data_connect_server = data_connect_serv(conf_name)
     server_sock.connect((data_connect_server['addr_server'], data_connect_server['port_server']))

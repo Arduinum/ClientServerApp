@@ -1,28 +1,8 @@
 from common.utils import read_conf
-from unittest import TestCase
-from client import request_presence, response_analysis, get_answer, data_connect_serv, work_client
-from json import dumps
+from unittest import TestCase, main
+from client import request_presence, response_analysis, get_answer, data_connect_serv
 from time import ctime
-
-
-class TestSocket:
-    """Тестовый класс для тестирования отправки и получения сообщений"""
-    def __init__(self, test_dict):
-        self.test_dict = test_dict
-        self.encode_message = None
-        self.get_message = None
-        self.config = read_conf('../common/config.yaml')
-
-    def send(self, message):
-        """Отправляет корректно закодированное сообщение"""
-        test_message = dumps(self.test_dict)  # превращаем словарь в строку
-        self.encode_message = test_message.encode(self.config['ENCODING'])  # кодируем данные
-        self.get_message = message
-
-    def recv(self, max_length):
-        """Получает данные из сокета"""
-        test_message = dumps(self.test_dict)
-        return test_message.encode(self.config['ENCODING'])
+from test_utils import TestSocket
 
 
 class TestClient(TestCase):
@@ -53,14 +33,15 @@ class TestClient(TestCase):
         """Тестирует функцию response_analysis(), которая анализирует правильный ответ от сервера"""
         self.assertEqual(response_analysis(self.test_dict_get_ok, self.name_conf), '200 : OK')
 
-    def test_get_answer(self):
-        # test_sock_ok = TestSocket(self.test_dict_get_ok)
-        # print(get_answer(test_sock_ok))
-        pass
+    def test_get_answer_ok(self):
+        """Тестирует функцию ответа сервера в нужной кодировке"""
+        test_sock_ok = TestSocket(self.test_dict_get_ok)
+        self.assertEqual(get_answer(test_sock_ok, self.name_conf), '200 : OK')
 
-    def test_data_connect_serv(self):
+    def test_data_connect_serv_ok(self):
         """Тестирует данные для подключения на корректность"""
         self.assertEqual(data_connect_serv(self.name_conf), self.test_dict_data_connect)
 
-    def test_work_client(self):
-        pass
+
+if __name__ == '__main__':
+    main()

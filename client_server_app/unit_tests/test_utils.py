@@ -46,8 +46,10 @@ class TestUtils(TestCase):
     }
     conf_dict = {
         'ADDR_LISTEN_DEF': '',
+        'ADDR_SERV': 'addr_server',
         'ADDR_DEF': '127.0.0.1',
         'PORT_DEF': 7777,
+        'PORT_SERV': 'port_server',
         'MAX_CONNECT': 6,
         'MAX_MESSAGE_LEN_BYTE': 1024,
         'ENCODING': 'utf-8',

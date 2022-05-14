@@ -1,29 +1,8 @@
-from server import message_handler, get_address, get_port, work_server
+from server import message_handler, get_address, get_port
 from common.utils import read_conf
-from unittest import TestCase
+from unittest import TestCase, main
 from time import ctime
-from json import dumps
 from sys import argv
-
-
-class TestSocket:
-    """Тестовый класс для тестирования отправки и получения сообщений"""
-    def __init__(self, test_dict):
-        self.test_dict = test_dict
-        self.encode_message = None
-        self.get_message = None
-        self.config = read_conf('../common/config.yaml')
-
-    def send(self, message):
-        """Отправляет корректно закодированное сообщение"""
-        test_message = dumps(self.test_dict)  # превращаем словарь в строку
-        self.encode_message = test_message.encode(self.config['ENCODING'])  # кодируем данные
-        self.get_message = message
-
-    def recv(self, max_length):
-        """Получает данные из сокета"""
-        test_message = dumps(self.test_dict)
-        return test_message.encode(self.config['ENCODING'])
 
 
 class TestServer(TestCase):
@@ -74,6 +53,6 @@ class TestServer(TestCase):
         argv.append('7778')
         self.assertIsInstance(get_port(self.name_conf), int)
 
-    def test_work_server(self):
-        """Тестирует работу сервера"""
-        pass
+
+if __name__ == '__main__':
+    main()
