@@ -1,32 +1,32 @@
 #!../venv/bin/python3
 from sys import argv, exit
-from os import getenv
-from dotenv import load_dotenv
 from socket import socket, AF_INET, SOCK_STREAM
 from json import JSONDecodeError
 from time import ctime
-from common.utils import send_message, get_message
+from common.utils import send_message, get_message, read_conf
 
 
-load_dotenv(dotenv_path='./common/.env')
+name = './common/config.yaml'
 
 
-def request_presence(account='Guest'):
+def request_presence(account='Guest', conf_name=name):
     """Запрашивает присутствие клиента"""
+    conf = read_conf(conf_name)
     output = dict()
-    output[getenv('ACTION')] = getenv('PRESENCE')
-    output[getenv('TIME')] = ctime()
-    output[getenv('USER_NAME')] = {getenv('ACCOUNT_NAME'): account}
+    output[conf['ACTION']] = conf['PRESENCE']
+    output[conf['TIME']] = ctime()
+    output[conf['USER_NAME']] = {conf['ACCOUNT_NAME']: account}
     return output
 
 
-def response_analysis(message):
+def response_analysis(message, conf_name=name):
     """Выполняет разбор ответа сервера"""
+    conf = read_conf(conf_name)
     for key in message.keys():
-        if key == getenv('RESPONSE'):
-            if message[getenv('RESPONSE')] == 200:
+        if key == conf['RESPONSE']:
+            if message[conf['RESPONSE']] == 200:
                 return '200 : OK'
-            return f'400 : {message[getenv("ERROR")]}'
+            return f'400 : {message[conf["ERROR"]]}'
     raise ValueError
 
 
@@ -37,8 +37,9 @@ def get_answer(serv_sock):
         return 'Провал декодирования сообщения сервера!'
 
 
-def data_connect_serv():
+def data_connect_serv(conf_name=name):
     """Получает корректные данные для соединения с сервером"""
+    conf = read_conf(conf_name)
     try:
         addr_server = argv[1]
         port_server = int(argv[2])
@@ -46,19 +47,21 @@ def data_connect_serv():
             raise ValueError
         return {'addr_server': addr_server, 'port_server': port_server}
     except IndexError:
-        return {'addr_server': getenv('ADDR_DEF'), 'port_server': getenv('PORT_DEF')}
+        return {'addr_server': conf['ADDR_DEF'], 'port_server': conf['PORT_DEF']}
     except ValueError:
         print('Номер порта должен быть указан в диапазоне от 1024 до 65535!')
         exit(1)
 
 
-def work_client():
+def work_client(conf_name=name, command=None):
     """Отвечает за запуск и работу клиента"""
+    if command == 'test':
+        conf_name = '.' + conf_name
     server_sock = socket(AF_INET, SOCK_STREAM)  # создаём сокет TCP
-    data_connect_server = data_connect_serv()
-    server_sock.connect((data_connect_server['addr_server'], int(data_connect_server['port_server'])))
-    message_to_serv = request_presence()
-    send_message(server_sock, message_to_serv)
+    data_connect_server = data_connect_serv(conf_name)
+    server_sock.connect((data_connect_server['addr_server'], data_connect_server['port_server']))
+    message_to_serv = request_presence(conf_name=conf_name)
+    send_message(server_sock, message_to_serv, conf_name)
     answer = get_answer(server_sock)
     print(answer)
 
