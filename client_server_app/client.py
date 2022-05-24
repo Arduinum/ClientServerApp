@@ -66,8 +66,8 @@ def data_connect_serv(conf_name=name):
         client_logger.info(f'Получены корректные адрес сервера {addr_server} и порт сервера {port_server}')
         return {'addr_server': addr_server, 'port_server': port_server}
     except IndexError:
-        client_logger.info(f'Установлены адрес сервера {conf["ADDR_DEF"]} и порт сервера {conf["PORT_DEF"]} по умолчанию так '
-                    f'как они не были введены')
+        client_logger.info(f'Установлены адрес сервера {conf["ADDR_DEF"]} и порт сервера {conf["PORT_DEF"]} по '
+                           f'умолчанию так как они не были введены')
         return {'addr_server': conf['ADDR_DEF'], 'port_server': conf['PORT_DEF']}
     except ValueError:
         client_logger.error('Номер порта должен быть указан в диапазоне от 1024 до 65535!')

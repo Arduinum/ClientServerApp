@@ -18,8 +18,7 @@ file_hand.setFormatter(format_message)
 logger.addHandler(file_hand)
 logger.setLevel(DEBUG)
 
-# date = f"{strftime('%y')}-{strftime('%m')}-{strftime('%d')}"
-date = f"{strftime('%y')}-{strftime('%m')}-19"
+date = f"{strftime('%y')}-{strftime('%m')}-{strftime('%d')}"
 file_hand_one_day = FileHandler(path.abspath(f'server.log.{date}'))
 file_hand_one_day.setLevel(DEBUG)
 file_hand_one_day.setFormatter(format_message)
