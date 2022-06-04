@@ -12,9 +12,9 @@ def log(func):
         logger_now = None
         date = ctime()
         call_from = stack()[1][3]
-        if call_from == 'work_client' or call_from == 'get_answer':
+        if call_from == 'work_client' or call_from == 'get_answer' or call_from == 'data_connect_serv':
             logger_now = getLogger('client')
-        if call_from == 'work_server':
+        if call_from == 'work_server' or call_from == 'message_handler':
             logger_now = getLogger('server')
         logger_now.debug(f'{date} - функция {func.__name__} вызвана из функции {call_from}')
         return func_call
