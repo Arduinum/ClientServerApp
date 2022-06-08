@@ -15,20 +15,43 @@ server_logger = getLogger('server')
 
 
 @log
-def message_handler(message, mess_list, client, conf_name=name):
+def message_handler(message, mess_list, client, clients, names, conf_name=name):
     """Обрабатывает сообщения от клиентов"""
-    print(message)
     server_logger.debug(f'Обработка сообщения от клиента - {message}')
     conf = read_conf(conf_name)
+    # если сообщение о присутствии клиента
+    print(message)
     if conf['ACTION'] in message and message[conf['ACTION']] == conf['PRESENCE'] and conf['TIME'] in message \
-            and conf['USER_NAME'] in message and message[conf['USER_NAME']][conf['ACCOUNT_NAME']] == 'Guest':
-        form_message = {conf['RESPONSE']: 200}
-        send_message(client, form_message)
+            and conf['USER_NAME'] in message:
+        print(1)
+        print(names.keys())
+        if message[conf['USER_NAME']] not in names.keys():
+
+            names[message['USER_NAME']['ACCOUNT_NAME']] = client
+            response = {conf['RESPONSE']: 200}
+            send_message(client, response, conf_name=conf_name)
+            server_logger.debug(f'Присутствие клиента {response} - {client}')
+        else:
+            response = {
+                conf['RESPONSE']: 400,
+                conf['ERROR']: 'Такое имя пользователя уже существует!'
+            }
+            send_message(client, response, conf_name=conf_name)
+            clients.remove(client)
+            client.close()
+            server_logger.debug(f'Имя пользователя {message[conf["USER_NAME"]]} уже существует!')
         return
+    # если это сообщение от пользователя
     elif conf['ACTION'] in message and message[conf['ACTION']] == conf['MESSAGE'] and conf['TIME'] in message \
-            and conf['MESS_TEXT'] in message:
+            and conf['MESS_TEXT'] in message and conf['TARGET'] in message and conf['ADDRESSER'] in message:
         mess_list.append((message[conf['ACCOUNT_NAME']], message[conf['MESS_TEXT']]))
         return
+    # если клиент решил выйти
+    elif conf['ACTION'] in message and message[conf['ACTION']] == conf['OUT'] and conf['ACCOUNT_NAME'] in message:
+        clients.remove(names[message[conf['ACCOUNT_NAME']]])
+        names[message[conf['ACCOUNT_NAME']]].close()
+        names.remove(message[conf['ACCOUNT_NAME']])
+    # иначе (если некорректный запрос)
     else:
         form_message = {
             conf['RESPONSE']: 400,
@@ -76,6 +99,22 @@ def get_port(conf_name=name):
         exit(1)
 
 
+@log
+def message_for_target(message, names, hear_socks, conf_name=name):
+    """Функция отправляющая сообщение определённому пользователю"""
+    conf = read_conf(conf_name)
+
+    if message[conf['TARGET']] in message and names[message[conf['TARGET']]] in hear_socks:
+        send_message(names[message[conf['TARGET']]], message, conf_name=conf_name)
+        server_logger.info(f'Сообщение пользователю {message[conf["TARGET"]]} отправлено успешно.\n'
+                           f'Отправитель {message[conf["ADDRESSER"]]}.')
+    elif message[conf['TARGET']] in names and names[message[conf['TARGET']]] not in hear_socks:
+        raise ConnectionError
+    else:
+        server_logger.error(f'Пользователь {message[conf["TARGET"]]} должен пройти регистрацию!\n'
+                            f'Отправка сообщения доступна лишь зарегестрированным пользователям!')
+
+
 def work_server(conf_name=name):
     """Отвечает за запуск и работу сервера"""
     addr_listen = get_address(conf_name)
@@ -89,9 +128,11 @@ def work_server(conf_name=name):
     conf = read_conf(conf_name)
     server_sock = socket(AF_INET, SOCK_STREAM)  # создаём сокет TCP
     server_sock.bind((addr_listen, port_listen))  # присваиваем порт и адрес
+    server_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)  # устанавливаем опции сокета
     server_sock.settimeout(0.8)  # таймаут для операций с сокетом
-    clients_list = []
-    messages_queue = []
+    clients_list = list()
+    messages_queue = list()
+    client_names = dict()  # ключ имя пользователя значение сокет его клиента
     server_sock.listen(conf['MAX_CONNECT'])  # слушаем порт
 
     while True:
@@ -105,6 +146,7 @@ def work_server(conf_name=name):
             clients_list.append(client)  # добавляем постучавшегося клиента
 
         r_list, w_list = [], []
+        # проверка есть ли ждущие клиенты
         try:
             if len(clients_list) > 0:
                 r_list, w_list, e_list = select(clients_list, clients_list, [], 0)
@@ -115,30 +157,20 @@ def work_server(conf_name=name):
         if len(r_list) > 0:
             for r_client in r_list:
                 try:
-                    print(r_client)
-                    message_handler(get_message(r_client), messages_queue, r_client)
+                    message_handler(get_message(r_client), messages_queue, r_client, clients_list, client_names)
                 except (Exception, ):
                     server_logger.info(f'Клиент {r_client.getpeername()} отключился от сервера')
                     clients_list.remove(r_client)
 
-        # отправка сообщений ожидающим клиентам
-        if len(messages_queue) > 0 and len(w_list) > 0:
-            server_logger.debug('отправка сообщений ожидающим клиентам')
-            data_message = {
-                conf['ACTION']: conf['MESSAGE'],
-                conf['ADDRESSER']: messages_queue[0][0],
-                conf['TIME']: ctime(),
-                conf['MESS_TEXT']: messages_queue[0][1]
-            }
-            messages_queue.pop(0)
-            for wait_client in w_list:
-                try:
-                    server_logger.debug(f'отправка сообщения ожидающиму клиенту {wait_client}')
-                    send_message(wait_client, data_message, conf_name)
-                except (Exception, ):
-                    server_logger.info(f'Клиент {wait_client.getpeername()} отключился от сервера')
-                    wait_client.close()
-                    clients_list.remove(wait_client)
+        # обрабратываем сообщения если они есть
+        for item in messages_queue:
+            try:
+                message_for_target(item, client_names, w_list)
+            except (Exception, ):
+                server_logger.info(f'Соединение с клиентом {item[conf["TARGET"]]} было потеряно')
+                clients_list.remove(client_names[item[conf['TARGET']]])
+                del client_names[item[conf['TARGET']]]
+        messages_queue.clear()
 
 
 if __name__ == '__main__':

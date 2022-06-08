@@ -16,3 +16,6 @@ ERROR: error
 MESSAGE: message
 MESS_TEXT: mess_text
 ADDRESSER: addresser
+RECIPIENT: recipient
+TARGET: to
+OUT: out

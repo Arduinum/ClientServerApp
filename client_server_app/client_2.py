@@ -70,8 +70,7 @@ def create_message(serv_sock, account, conf_name=name):
     data_message = {
         conf['ACTION']: conf['MESSAGE'],
         conf['TIME']: ctime(),
-        conf['ADDRESSER']: account,
-        conf['TARGET']: target_user,
+        conf['ACCOUNT_NAME']: account,
         conf['MESS_TEXT']: message
     }
     client_logger.debug(f'Сформеровано сообщение: {data_message}')
@@ -154,9 +153,6 @@ def check_argv(arg_name):
             elif '--addr' in argv:
                 return argv[argv.index('--addr') + 1]
             else:
-                for arg in argv:
-                    if arg == '-n' or arg == '--name':
-                        return None
                 return argv[1]
     except IndexError:
         return None
@@ -239,7 +235,7 @@ def work_client(conf_name=name):
     try:
         server_sock = socket(AF_INET, SOCK_STREAM)  # создаём сокет TCP
         server_sock.connect((data_connect_server['addr_server'], data_connect_server['port_server']))
-        message_to_serv = request_presence(name_client, conf_name=conf_name)
+        message_to_serv = request_presence(conf_name=conf_name)
         client_logger.info(f'Сообщение для сервера сформировано успешно.')
         send_message(server_sock, message_to_serv, conf_name)
         client_logger.info(f'Сообщение для сервера отправлено успешно.')
