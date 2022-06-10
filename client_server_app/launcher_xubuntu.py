@@ -38,8 +38,8 @@ def launcher():
                 killpg(kill_proc.pid, signal.SIGINT)  # убиваем все процессы
 
 
-launcher()
+# launcher()
 
 
-# if __name__ == '__main__':
-#     launcher()
+if __name__ == '__main__':
+    launcher()

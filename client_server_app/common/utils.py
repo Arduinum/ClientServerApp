@@ -12,7 +12,9 @@ def log(func):
         logger_now = None
         date = ctime()
         call_from = stack()[1][3]
-        if call_from == 'work_client' or call_from == 'get_answer' or call_from == 'data_connect_serv':
+        if call_from == 'work_client' or call_from == 'get_answer' or call_from == 'data_connect_serv' or \
+                call_from == 'interactive_for_user' or call_from == 'message_server_from_user' or \
+                call_from == 'run':
             logger_now = getLogger('client')
         if call_from == 'work_server' or call_from == 'message_handler':
             logger_now = getLogger('server')
@@ -30,12 +32,13 @@ def read_conf(file_name):
 name = './common/config.yaml'
 
 
-@log
 def get_message(client, conf_name=name):
     """Принимает и декодирует сообщение"""
     conf = read_conf(conf_name)
     encode_response = client.recv(conf['MAX_MESSAGE_LEN_BYTE'])
     if str(type(encode_response)) == "<class 'bytes'>":
+        if encode_response == b'':
+            return None
         json_response = encode_response.decode(conf['ENCODING'])
         if str(type(json_response)) == "<class 'str'>":
             response = json.loads(json_response)
@@ -46,7 +49,6 @@ def get_message(client, conf_name=name):
     raise ValueError
 
 
-@log
 def send_message(socket, message, conf_name=name):
     """Кодирует и отправляет сообщение"""
     conf = read_conf(conf_name)

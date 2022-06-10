@@ -10,7 +10,6 @@ from common.utils import log
 from threading import Thread
 import logs.client_log_config
 
-
 name = './common/config.yaml'
 
 client_logger = getLogger('client')
@@ -76,7 +75,7 @@ def create_message(serv_sock, account, conf_name=name):
     }
     client_logger.debug(f'Сформеровано сообщение: {data_message}')
     try:
-        send_message(serv_sock, create_message(serv_sock), conf_name)
+        send_message(serv_sock, data_message, conf_name)
         client_logger.debug(f'Сообщение для пользователя {target_user} отправлено успешно')
     except Exception as err:
         client_logger.critical(f'{err}, соединение с сервером было потеряно')
@@ -109,18 +108,21 @@ def interactive_for_user(sock, user_name, conf_name=name):
 
 
 @log
-def message_server_from_user(message, name_client, conf_name=name):
+def message_server_from_user(sock, name_client, conf_name=name):
     """Функция - обрабатывает сообщения от других пользователей, которые идут с сервера"""
+    client_logger.debug('Попытка обработки сообщений от других пользователей')
     conf = read_conf(conf_name)
     while True:
         try:
-            if conf['MESS_TEXT'] in message and conf['ADDRESSER'] in message and \
-                    message[conf['ACTION']] == conf['MESSAGE'] and conf['ACTION'] in message and \
-                    conf['TARGET'] in message and message[conf['TARGET']] == name_client:
-                print(f'Получено сообщение от этого пользователя {message[conf["ADDRESSER"]]}:\n'
-                      f'{message[conf["MESS_TEXT"]]}')
-            else:
-                client_logger.error(f'Получено некорректное сообщение сообщение с сервера: {message}')
+            message = get_message(sock)
+            if message:
+                if conf['MESS_TEXT'] in message and conf['ADDRESSER'] in message and \
+                        message[conf['ACTION']] == conf['MESSAGE'] and conf['ACTION'] in message and \
+                        conf['TARGET'] in message and message[conf['TARGET']] == name_client:
+                    print(f'Получено сообщение от этого пользователя {message[conf["ADDRESSER"]]}:\n'
+                          f'{message[conf["MESS_TEXT"]]}')
+                else:
+                    client_logger.error(f'Получено некорректное сообщение сообщение с сервера: {message}')
         except (OSError, ConnectionError, ConnectionAbortedError, ConnectionResetError, JSONDecodeError):
             client_logger.critical('Соединение с сервером было потеряно.')
             break
@@ -252,13 +254,13 @@ def work_client(conf_name=name):
 
     else:
         # старт процесса клиента приёма сообщений
-        recipient = Thread(target=message_server_from_user, args=(get_message(server_sock), name_client))
+        recipient = Thread(target=message_server_from_user, args=(server_sock, name_client))
         recipient.daemon = True
         recipient.start()
         client_logger.debug('Старт процесса приёма сообщений.')
 
         # старт процесса отправки сообщений и интерактивного взаимодействия с пользователем
-        interface = Thread(target=interactive_for_user)
+        interface = Thread(target=interactive_for_user, args=(server_sock, name_client))
         interface.daemon = True
         interface.start()
         client_logger.debug('Старт процесса отправки сообщений и интерактивного взаимодействия с пользователем.')

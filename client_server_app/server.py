@@ -20,14 +20,11 @@ def message_handler(message, mess_list, client, clients, names, conf_name=name):
     server_logger.debug(f'Обработка сообщения от клиента - {message}')
     conf = read_conf(conf_name)
     # если сообщение о присутствии клиента
-    print(message)
     if conf['ACTION'] in message and message[conf['ACTION']] == conf['PRESENCE'] and conf['TIME'] in message \
             and conf['USER_NAME'] in message:
-        print(1)
-        print(names.keys())
-        if message[conf['USER_NAME']] not in names.keys():
-
-            names[message['USER_NAME']['ACCOUNT_NAME']] = client
+        if message[conf['USER_NAME']][conf['ACCOUNT_NAME']] not in names.keys():
+            client_now = message[conf['USER_NAME']][conf['ACCOUNT_NAME']]
+            names[client_now] = client
             response = {conf['RESPONSE']: 200}
             send_message(client, response, conf_name=conf_name)
             server_logger.debug(f'Присутствие клиента {response} - {client}')
@@ -44,13 +41,14 @@ def message_handler(message, mess_list, client, clients, names, conf_name=name):
     # если это сообщение от пользователя
     elif conf['ACTION'] in message and message[conf['ACTION']] == conf['MESSAGE'] and conf['TIME'] in message \
             and conf['MESS_TEXT'] in message and conf['TARGET'] in message and conf['ADDRESSER'] in message:
-        mess_list.append((message[conf['ACCOUNT_NAME']], message[conf['MESS_TEXT']]))
+        mess_list.append(message)
         return
     # если клиент решил выйти
     elif conf['ACTION'] in message and message[conf['ACTION']] == conf['OUT'] and conf['ACCOUNT_NAME'] in message:
         clients.remove(names[message[conf['ACCOUNT_NAME']]])
         names[message[conf['ACCOUNT_NAME']]].close()
-        names.remove(message[conf['ACCOUNT_NAME']])
+        client_now = message[conf['ACCOUNT_NAME']]
+        del names[client_now]
     # иначе (если некорректный запрос)
     else:
         form_message = {
@@ -104,7 +102,7 @@ def message_for_target(message, names, hear_socks, conf_name=name):
     """Функция отправляющая сообщение определённому пользователю"""
     conf = read_conf(conf_name)
 
-    if message[conf['TARGET']] in message and names[message[conf['TARGET']]] in hear_socks:
+    if message[conf['TARGET']] in names and names[message[conf['TARGET']]] in hear_socks:
         send_message(names[message[conf['TARGET']]], message, conf_name=conf_name)
         server_logger.info(f'Сообщение пользователю {message[conf["TARGET"]]} отправлено успешно.\n'
                            f'Отправитель {message[conf["ADDRESSER"]]}.')
