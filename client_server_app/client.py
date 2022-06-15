@@ -75,7 +75,8 @@ class Client:
         except Exception as err:
             self.client_logger.critical(f'{err}, соединение с сервером было потеряно')
 
-    def help_for_user(self):
+    @staticmethod
+    def help_for_user():
         """Функция для вывода списка всех возможных команд для пользователя"""
         return 'Список доступных команд:\nsend - написать и отправить сообщение\n' \
                'help - вывести список доступных команд\nexit - завершить работу программы'
@@ -229,7 +230,7 @@ class Client:
         try:
             server_sock = socket(AF_INET, SOCK_STREAM)  # создаём сокет TCP
             server_sock.connect((data_connect_server['addr_server'], data_connect_server['port_server']))
-            message_to_serv = self.request_presence(name_client, conf_name=self.conf_name)
+            message_to_serv = self.request_presence(name_client)
             self.client_logger.info(f'Сообщение для сервера сформировано успешно.')
             send_message(server_sock, message_to_serv, self.conf_name)
             self.client_logger.info(f'Сообщение для сервера отправлено успешно.')
