@@ -8,10 +8,11 @@ from logging import getLogger
 from common.utils import log
 # Thread - класс для работы с потоками
 from threading import Thread
+from metaclasses import ClientVerifier
 import logs.client_log_config
 
 
-class Client:
+class Client(metaclass=ClientVerifier):
     def __init__(self):
         self.conf_name = './common/config.yaml'
         self.conf = read_conf(self.conf_name)

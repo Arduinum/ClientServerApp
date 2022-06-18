@@ -1,20 +1,39 @@
 #!../venv/bin/python3
-from sys import argv, exit
+from sys import argv
 from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 from select import select
 from common.utils import get_message, send_message, read_conf
-from json import JSONDecodeError
 from time import ctime
 from logging import getLogger
 import logs.server_log_config
 from common.utils import log
+from descriptor import PortDescriptor
+from metaclasses import ServerVerifier
 
 
-class Server:
-    def __init__(self):
+def get_item_args(name_arg):
+    """Функция для поиска аргумента в списке аргументов"""
+    conf_name = './common/config.yaml'
+    conf = read_conf(conf_name)
+
+    if name_arg == 'port':
+        for p in argv:
+            if p.isdigit():
+                return int(p)
+            elif p[0] == '-':
+                if p[1:].isdigit():
+                    return int(p)
+        return conf['PORT_DEF']
+
+
+class Server(metaclass=ServerVerifier):
+    port_listen = PortDescriptor()
+
+    def __init__(self, port):
         self.conf_name = './common/config.yaml'
         self.conf = read_conf(self.conf_name)
         self.server_logger = getLogger('server')
+        self.port_listen = port
 
     @log
     def message_handler(self, message, mess_list, client, clients, names):
@@ -76,26 +95,6 @@ class Server:
             self.server_logger.critical('После параметра "-a" нужно указать адрес для прослушивания сервером!')
 
     @log
-    def get_port(self):
-        """Возращает корректный порт для прослушивания сервером"""
-        self.server_logger.debug(f'Получение порта для прослушивания сервером из - {self.conf_name}')
-        try:
-            for i, port in enumerate(argv):
-                if port == '-p':
-                    if int(argv[i + 1]) < 1024 or int(argv[i + 1]) > 65535:
-                        raise ValueError
-                    self.server_logger.info(f'Получен порт для прослушивания сервером - {argv[i + 1]}')
-                    return int(argv[i + 1])
-            self.server_logger.info(f'Для прослушивания сервером задан порт по умолчанию - {self.conf["PORT_DEF"]}')
-            return self.conf['PORT_DEF']
-        except IndexError:
-            self.server_logger.critical('После параметра "-p" нужно указать номер порта!')
-            exit(1)
-        except ValueError:
-            self.server_logger.critical('Номер порта должен быть указан в диапазоне от 1024 до 65535!')
-            exit(1)
-
-    @log
     def message_for_target(self, message, names, hear_socks):
         """Метод класса отправляющий сообщение определённому пользователю"""
         if message[self.conf['TARGET']] in names and names[message[self.conf['TARGET']]] in hear_socks:
@@ -111,17 +110,17 @@ class Server:
     def work_server(self):
         """Отвечает за запуск и работу сервера"""
         addr_listen = self.get_address()
-        port_listen = self.get_port()
 
         if len(addr_listen) == 0:
-            self.server_logger.info(f'Старт сервера на адресе 0.0.0.0:{port_listen}, использующимся для подключения.')
+            self.server_logger.info(f'Старт сервера на адресе 0.0.0.0:{self.port_listen}, использующимся для '
+                                    f'подключения.')
         else:
             self.server_logger.info(
-                f'Старт сервера на адресе {addr_listen}:{port_listen}, использующимся для подключения.')
+                f'Старт сервера на адресе {addr_listen}:{self.port_listen}, использующимся для подключения.')
 
         conf = read_conf(self.conf_name)
         server_sock = socket(AF_INET, SOCK_STREAM)  # создаём сокет TCP
-        server_sock.bind((addr_listen, port_listen))  # присваиваем порт и адрес
+        server_sock.bind((addr_listen, self.port_listen))  # присваиваем порт и адрес
         server_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)  # устанавливаем опции сокета
         server_sock.settimeout(0.8)  # таймаут для операций с сокетом
         clients_list = list()
@@ -168,10 +167,12 @@ class Server:
             messages_queue.clear()
 
 
-server = Server()
+listen_port = get_item_args('port')
+server = Server(listen_port)
 server.work_server()
 
 
 if __name__ == '__main__':
-    server = Server()
+    listen_port = get_item_args('port')
+    server = Server(listen_port)
     server.work_server()
