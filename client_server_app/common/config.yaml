@@ -19,3 +19,8 @@ ADDRESSER: addresser
 RECIPIENT: recipient
 TARGET: to
 OUT: out
+GET_CONTACTS: get_contacts
+DATA_LIST: data_list
+ADD_CONTACT: add_contact
+DEL_CONTACT: del_contact
+GET_USERS: get_users
