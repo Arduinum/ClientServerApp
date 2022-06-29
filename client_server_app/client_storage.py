@@ -2,6 +2,8 @@ from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime
 from sqlalchemy.orm import sessionmaker, declarative_base
 from datetime import datetime
 
+from common.utils import read_conf
+
 
 class ClientStorage:
     """Класс для работы с базой данных клиента в декларативном стиле"""
@@ -15,6 +17,7 @@ class ClientStorage:
 
         def __init__(self, login):
             self.login = login
+            super().__init__()
 
     class HistoryMessages(Base):
         """Класс история сообщений"""
@@ -30,6 +33,7 @@ class ClientStorage:
             self.for_user = for_user
             self.message = message
             self.date = datetime.now()
+            super().__init__()
 
     class UserContacts(Base):
         """Класс контакты пользователя"""
@@ -39,11 +43,15 @@ class ClientStorage:
 
         def __init__(self, contact_login):
             self.contact_login = contact_login
+            super().__init__()
 
-    def __init__(self):
+    def __init__(self, path):
         # установка соединения с бд и сбор конф информации
         # echo=True - ведение лога, poll_recycle=7200 - переустановка соединения с бд каждые 2 часа
-        self.engine = create_engine('sqlite:///client_data.db3', echo=True, pool_recycle=7200)
+        self.conf_name = './common/config_client_db.yaml'
+        self.conf = read_conf(self.conf_name)
+        self.engine = create_engine(f'sqlite:///client_data.db3{path}/{self.conf["DB_NAME_FILE"]}', echo=True,
+                                    pool_recycle=7200)
         self.Base.metadata.create_all(self.engine)  # создаём все таблицы
         session_fabric = sessionmaker(bind=self.engine)
         self.session = session_fabric()  # создаём сессию

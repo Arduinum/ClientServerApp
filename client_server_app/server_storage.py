@@ -73,6 +73,7 @@ class ServerStorage:
             self.login_id = login_id
             self.transmitted = 0  # переданных сообщений
             self.accepted = 0  # полученных сообщений
+            super().__init__()
 
     def __init__(self, path):
         # установка соединения с бд и сбор конф информации
@@ -233,7 +234,7 @@ class ServerStorage:
 if __name__ == '__main__':
     dir_path = dirname(realpath(__file__))
     storage = ServerStorage(dir_path)
-    storage.table_clear('all')
+    # storage.table_clear('all')
     # storage.table_clear('AllUsers')
     # storage.user_login('Bot228', '0.0.0.0', 7777)
     # storage.user_login('BotT1000', '0.0.0.1', 7777)

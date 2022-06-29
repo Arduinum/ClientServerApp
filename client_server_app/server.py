@@ -17,7 +17,6 @@ from server_gui import MainWindow, HistoryUsersWindow, SettingsWindow, gui_creat
 from os.path import dirname, realpath
 from yaml import dump
 
-
 # флаг для определения подключенного нового пользователя (для экономии запросов к бд)
 new_connect = False
 flag_lock = Lock()
@@ -38,37 +37,46 @@ def get_item_args(name_arg):
         return conf['PORT_DEF']
 
 
+class ServerError(Exception):
+    """Класс ошибка сервера"""
+    def __init__(self, text):
+        self.text = text
+
+
 class Server(Thread, metaclass=ServerVerifier):
     port_listen = PortDescriptor()
 
-    def __init__(self, port, db):
+    def __init__(self, addr, port, db):
         self.conf_name = './common/config.yaml'
         self.conf_serv_db_name = './common/config_server_db.yaml'
         self.conf = read_conf(self.conf_name)
         self.server_logger = getLogger('server')
+        self.addr_listen = addr
         self.port_listen = port
         self.db = db
         self.client_names = dict()  # ключ имя пользователя значение сокет его клиента
         super().__init__()
 
-    def work_server(self):
+    def run(self):
         """Отвечает за запуск и работу сервера"""
-        addr_listen = self.get_address()
+        # run связан с Thread
 
-        if len(addr_listen) == 0:
+        if len(self.addr_listen) == 0:
             self.server_logger.info(f'Старт сервера на адресе 0.0.0.0:{self.port_listen}, использующимся для '
                                     f'подключения.')
         else:
             self.server_logger.info(
-                f'Старт сервера на адресе {addr_listen}:{self.port_listen}, использующимся для подключения.')
+                f'Старт сервера на адресе {self.addr_listen}:{self.port_listen}, использующимся для подключения.')
 
         conf = read_conf(self.conf_name)
         server_sock = socket(AF_INET, SOCK_STREAM)  # создаём сокет TCP
-        server_sock.bind((addr_listen, self.port_listen))  # присваиваем порт и адрес
+        server_sock.bind((self.addr_listen, self.port_listen))  # присваиваем порт и адрес
         server_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)  # устанавливаем опции сокета
         server_sock.settimeout(0.8)  # таймаут для операций с сокетом
+        print(server_sock)
         clients_list = list()
         messages_queue = list()
+        print(server_sock)
         server_sock.listen(conf['MAX_CONNECT'])  # слушаем порт
 
         while True:
@@ -80,7 +88,6 @@ class Server(Thread, metaclass=ServerVerifier):
             else:
                 self.server_logger.info(f'Пришёл запрос от клиента на соединение {client_addr}')
                 clients_list.append(client)  # добавляем постучавшегося клиента
-
             r_list, w_list = [], []
             # проверка есть ли ждущие клиенты
             try:
@@ -187,7 +194,6 @@ class Server(Thread, metaclass=ServerVerifier):
                 self.conf['DATA_LIST']: [user[0] for user in self.db.get_list_data('users')]
             }
             send_message(client, response)
-
         # иначе (если некорректный запрос)
         else:
             form_message = {
@@ -196,20 +202,6 @@ class Server(Thread, metaclass=ServerVerifier):
             }
             send_message(client, form_message)
             return
-
-    @log
-    def get_address(self):
-        """Возращает адрес для прослушивания сервером"""
-        self.server_logger.debug(f'Получение адреса для прослушивания сервером из - {self.conf_name}')
-        try:
-            for i, addr in enumerate(argv):
-                if addr == '-a':
-                    self.server_logger.info(f'Получен адрес для прослушивания сервером - {argv[i + 1]}')
-                    return argv[i + 1]
-            self.server_logger.info('Для прослушивания сервером задан адрес по умолчанию - 0.0.0.0')
-            return self.conf['ADDR_LISTEN_DEF']
-        except IndexError:
-            self.server_logger.critical('После параметра "-a" нужно указать адрес для прослушивания сервером!')
 
     @log
     def message_for_target(self, message, names, hear_socks):
@@ -228,95 +220,93 @@ class Server(Thread, metaclass=ServerVerifier):
 def main():
     dir_path = dirname(realpath(__file__))
     database = ServerStorage(dir_path)
+    conf_name = './common/config.yaml'
+    conf = read_conf(conf_name)
     listen_port = get_item_args('port')
-    server = Server(listen_port, database)
-    conf_db_serv = read_conf(server.conf_serv_db_name)
+    server = Server(conf['ADDR_LISTEN_DEF'], listen_port, database)
     server.daemon = True
     server.start()
 
-    # # создаст gui для сервера
-    # server_gui = QApplication(argv)
-    # main_window = MainWindow()
-    # # Инициализирует параметры для окон
-    # main_window.statusBar().showMessage('Server start Working')
-    # main_window.active_clients_table.setModel(gui_create(database))
-    # main_window.active_clients_table.resizeColumnsToContents()
-    # main_window.active_clients_table.resizeRowsToContents()
+    conf_db_serv = read_conf(server.conf_serv_db_name)
 
-    # def updater_list():
-    #     """Функция для обновления списка подключённых клиентов для gui"""
-    #     global new_connect
-    #     if new_connect:
-    #         main_window.active_clients_table.setModel(
-    #             gui_create(database))
-    #         main_window.active_clients_table.resizeColumnsToContents()
-    #         main_window.active_clients_table.resizeRowsToContents()
-    #         with flag_lock:
-    #             new_connect = False
-    #
-    # def print_statistics():
-    #     """Функция вывода статистики клиентов для gui"""
-    #     statist_window = HistoryUsersWindow()
-    #     statist_window.history_table.setModel(create_history_mess(database))
-    #     statist_window.history_table.resizeColumnsToContents()
-    #     statist_window.history_table.resizeRowsToContents()
-    #     statist_window.show()
-    #
-    # def server_settings():
-    #     """Функция для создания окна настроек сервера"""
-    #     global settings_window
-    #     settings_window = SettingsWindow()
-    #     settings_window.db_path.insert(dir_path)
-    #     settings_window.db_file.insert(conf_db_serv['DB_NAME_FILE'])
-    #     settings_window.port.insert(conf_db_serv['DEFAULT_PORT'])
-    #     settings_window.ip.insert(conf_db_serv['LISTEN_ADDR'])
-    #     settings_window.save_btn.clicked.connect(save_server_settings)
-    #
-    # def save_server_settings():
-    #     """Функция для сохранения настроек для gui"""
-    #     global settings_window
-    #     message = QMessageBox()
-    #     conf_db_serv['DB_PATH'] = settings_window.db_path.text()
-    #     conf_db_serv['DB_NAME_FILE'] = settings_window.db_file.text()
-    #     try:
-    #         port = int(settings_window.port.text())
-    #     except ValueError:
-    #         message.warning(settings_window, 'Ошибка', 'порт должен быть числом!')
-    #     else:
-    #         conf_db_serv['LISTEN_ADDR'] = settings_window.ip.text()
-    #         if 1023 < port < 65536:
-    #             conf_db_serv['DEFAULT_PORT'] = str(port)
-    #             print(port)
-    #             with open(server.conf_serv_db_name, 'w', encoding='utf-8') as file:
-    #                 dump(conf_db_serv, file, default_flow_style=False)
-    #                 message.information(
-    #                     settings_window, 'Успех', 'Настройки успешно сохранены!')
-    #         else:
-    #             message.warning(
-    #                 settings_window,
-    #                 'Ошибка',
-    #                 'допустимый диапазон чисел для порта от 1024 до 65536')
-    #
-    # # Таймер, который обновляет список клиентов раз в 1200 милсек
-    # timer = QTimer()
-    # timer.timeout.connect(updater_list)
-    # timer.start(1200)
-    #
-    # # Для связывания кнопки с процедурами
-    # main_window.refresh_button.triggered.connect(updater_list)
-    # main_window.show_history_button.triggered.connect(print_statistics)
-    # main_window.config_btn.triggered.connect(server_settings)
+    # создаст gui для сервера
+    server_gui = QApplication(argv)
+    main_window = MainWindow()
+    # Инициализирует параметры для окон
+    main_window.statusBar().showMessage('Server start Working')
+    main_window.active_clients_table.setModel(gui_create(database))
+    main_window.active_clients_table.resizeColumnsToContents()
+    main_window.active_clients_table.resizeRowsToContents()
 
+    def updater_list():
+        """Функция для обновления списка подключённых клиентов для gui"""
+        global new_connect
+        if new_connect:
+            main_window.active_clients_table.setModel(
+                gui_create(database))
+            main_window.active_clients_table.resizeColumnsToContents()
+            main_window.active_clients_table.resizeRowsToContents()
+            with flag_lock:
+                new_connect = False
+
+    def print_statistics():
+        """Функция вывода статистики клиентов для gui"""
+        global statist_window
+        statist_window = HistoryUsersWindow()
+        statist_window.history_table.setModel(create_history_mess(database))
+        statist_window.history_table.resizeColumnsToContents()
+        statist_window.history_table.resizeRowsToContents()
+        statist_window.show()
+
+    def server_settings():
+        """Функция для создания окна настроек сервера"""
+        global settings_window
+        settings_window = SettingsWindow()
+        settings_window.db_path.insert(dir_path)
+        settings_window.db_file.insert(conf_db_serv['DB_NAME_FILE'])
+        settings_window.port.insert(conf_db_serv['DEFAULT_PORT'])
+        settings_window.ip.insert(conf_db_serv['LISTEN_ADDR'])
+        settings_window.save_btn.clicked.connect(save_server_settings)
+
+    def save_server_settings():
+        """Функция для сохранения настроек для gui"""
+        global settings_window
+        message = QMessageBox()
+        conf_db_serv['DB_PATH'] = settings_window.db_path.text()
+        conf_db_serv['DB_NAME_FILE'] = settings_window.db_file.text()
+        try:
+            port = int(settings_window.port.text())
+        except ValueError:
+            message.warning(settings_window, 'Ошибка', 'порт должен быть числом!')
+        else:
+            conf_db_serv['LISTEN_ADDR'] = settings_window.ip.text()
+            if 1023 < port < 65536:
+                conf_db_serv['DEFAULT_PORT'] = str(port)
+                print(port)
+                with open(server.conf_serv_db_name, 'w', encoding='utf-8') as file:
+                    dump(conf_db_serv, file, default_flow_style=False)
+                    message.information(
+                        settings_window, 'Успех', 'Настройки успешно сохранены!')
+            else:
+                message.warning(
+                    settings_window,
+                    'Ошибка',
+                    'допустимый диапазон чисел для порта от 1024 до 65536')
+
+    # Таймер, который обновляет список клиентов раз в 1200 милсек
+    timer = QTimer()
+    timer.timeout.connect(updater_list)
+    timer.start(1200)
+
+    # Для связывания кнопки с процедурами
+    main_window.refresh_button.triggered.connect(updater_list)
+    main_window.show_history_button.triggered.connect(print_statistics)
+    main_window.config_btn.triggered.connect(server_settings)
     # Запуск gui
-    # server_gui.exec_() # сервер и gui не работают вместе!
-    # server.work_server()
+    server_gui.exec_()  # сервер и gui не работают вместе!
 
 
 # main()
 
 if __name__ == '__main__':
-    # listen_port = get_item_args('port')
-    # database = ServerStorage()
-    # server = Server(listen_port, database)
-    # server.work_server()
     main()
