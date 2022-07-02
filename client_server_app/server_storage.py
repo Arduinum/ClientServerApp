@@ -80,7 +80,7 @@ class ServerStorage:
         # echo=True - ведение лога, poll_recycle=7200 - переустановка соединения с бд каждые 2 часа
         self.conf_name = './common/config_server_db.yaml'
         self.conf = read_conf(self.conf_name)
-        self.engine = create_engine(f'sqlite:///{path}/{self.conf["DB_NAME_FILE"]}', echo=True, pool_recycle=7200)
+        self.engine = create_engine(f'sqlite:///{path}/{self.conf["DB_NAME_FILE"]}?check_same_thread=False', echo=True, pool_recycle=7200)
         self.Base.metadata.create_all(self.engine)  # создаём все таблицы
         session_fabric = sessionmaker(bind=self.engine)
         self.session = session_fabric()  # создаём сессию
@@ -234,7 +234,7 @@ class ServerStorage:
 if __name__ == '__main__':
     dir_path = dirname(realpath(__file__))
     storage = ServerStorage(dir_path)
-    # storage.table_clear('all')
+    storage.table_clear('all')
     # storage.table_clear('AllUsers')
     # storage.user_login('Bot228', '0.0.0.0', 7777)
     # storage.user_login('BotT1000', '0.0.0.1', 7777)

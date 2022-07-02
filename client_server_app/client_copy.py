@@ -13,22 +13,21 @@ from metaclasses import ClientVerifier
 import logs.client_log_config
 from server import ServerError
 from client_storage import ClientStorage
-
 # Объект для блокировки сокета и работы с базой данных
 socket_lock = Lock()
 db_lock = Lock()
 
 
-class Client:
+class Client(Thread):
     """Класс клиент, который запускает две части клиента"""
 
     def __init__(self):
+        super().__init__()
         self.conf_name = './common/config.yaml'
         self.conf = read_conf(self.conf_name)
         self.client_logger = getLogger('client')
-        super(Client, self).__init__()
 
-    @log_client
+    # @log_client
     def request_presence(self, account):
         """Запрашивает присутствие клиента"""
         self.client_logger.debug('Выполняется запрос присутствия клиента')
@@ -39,7 +38,7 @@ class Client:
         self.client_logger.debug(f'Запрос присутствия клиента выполнен успешно для пользователя {account}')
         return output
 
-    @log_client
+    # @log_client
     def check_argv(self, arg_name):
         """Проверяет с префиксами вводят аргумент команды или без префикса и возращает аргумент команды"""
         self.client_logger.debug('Проверка аргументов')
@@ -88,7 +87,7 @@ class Client:
             except IndexError:
                 return None
 
-    @log_client
+    # @log_client
     def data_connect_serv(self):
         """Получает корректные данные для соединения с сервером"""
         self.client_logger.debug('Получение корректных данных для соединения с сервером')
@@ -124,7 +123,7 @@ class Client:
             self.client_logger.error('Неверный ключ словаря для получения данных сервера по умолчанию!')
             exit(1)
 
-    @log_client
+    # @log_client
     def response_analysis(self, message):
         """Выполняет разбор ответа сервера"""
         self.client_logger.debug(f'Выполняется разбор ответа сервера - {message}')
@@ -138,13 +137,13 @@ class Client:
         self.client_logger.critical('Ошибка данных ValueError')
         raise ValueError
 
-    @log_client
+    # @log_client
     def get_answer(self, serv_sock, conf_name=None):
         """Функция для получения ответа от сервера в правильной кодировке"""
         self.client_logger.debug('Попытка получения сообщения из сокета в правильной кодировке')
         try:
             if conf_name is not None:
-                message_ok = self.response_analysis(get_message(serv_sock, conf_name=conf_name))
+                message_ok = self.response_analysis(get_message(serv_sock, conf_name=conf_name), conf_name=conf_name)
                 self.client_logger.info(f'Сообщение в правильной кодировке получено - {message_ok}')
                 return message_ok
             message_ok = self.response_analysis(get_message(serv_sock))
@@ -154,7 +153,7 @@ class Client:
             self.client_logger.error('Провал декодирования сообщения сервера!')
             return 'Провал декодирования сообщения сервера!'
 
-    @log_client
+    # @log_client
     def user_list_request(self, sock, username):
         """Метод класса делает запрос известных пользователей"""
         self.client_logger.debug(f'Запрос списка известных пользователей {username}')
@@ -171,7 +170,7 @@ class Client:
         else:
             raise ServerError
 
-    @log_client
+    # @log_client
     def contacts_list_request(self, sock, name):
         """Метод класса для запроса листа контактов"""
         self.client_logger.debug(f'Запрос контакт листа для пользователя {name}')
@@ -189,7 +188,7 @@ class Client:
         else:
             raise ServerError
 
-    @log_client
+    # @log_client
     def load_db(self, sock, database, username):
         """Метод класса инициирует базу данных"""
         try:
@@ -255,14 +254,13 @@ class Client:
 class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
     """Класс клиента отвечающий за отправку сообщений"""
 
-    def __init__(self, client_name, sock, db):
-        self.client_name = client_name
+    def __init__(self, client, sock, db):
+        self.client_name = client
         self.socket = sock
         self.data_base = db
-        super(ClientAddresser, self).__init__()
-        print(self.conf['ADDR_DEF'])
+        super().__init__()
 
-    @log_client
+    # @log_client
     def create_out_message(self, account):
         """Функция возвращает словарь с сообщением о выходе"""
         return {
@@ -271,7 +269,7 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
             self.conf['ACCOUNT_NAME']: account
         }
 
-    @log_client
+    # @log_client
     def create_message(self, serv_sock, account):
         """Возвращает введённое сообщение"""
         target_user = input('Введите имя пользователя:\n')
@@ -279,7 +277,6 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
 
         # проверка зарегистрирован ли получатель
         with db_lock:
-            print(target_user, 'checker!')
             if not self.data_base.checker_contact(target_user):
                 self.client_logger.error(f'Попытка передать сообщение '
                                          f'незарегистрированому получателю: {target_user}')
@@ -320,7 +317,7 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
                'history - вывести историю сообщений\nlist_contact - вывести список контактов\n' \
                'edit_contacts - редактирование списка контактов'
 
-    def run(self):
+    def run(self, sock, user_name):
         """Функция для интерактивного взаимодействия с пользователем, функции: запрос команд"""
         while True:
             command = input('Ведите команду: ')
@@ -328,13 +325,13 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
                 help_str = self.help_for_user()
                 print(help_str)
             elif command == 'send':
-                self.create_message(self.socket, self.client_name)
+                self.create_message(sock, user_name)
             elif command == 'exit':
                 with socket_lock:
                     try:
-                        send_message(self.socket, self.create_out_message(self.client_name), self.conf_name)
+                        send_message(sock, self.create_out_message(user_name), self.conf_name)
                     except Exception as err:
-                        self.client_logger.error(f'{err}, ошибка отправки сообщения о выходе для {self.client_name}!')
+                        self.client_logger.error(f'{err}, ошибка отправки сообщения о выходе для {user_name}!')
                     print('Соединение было завершено.')
                     self.client_logger.info('Пользователь завершил работу программы командой.')
                 sleep(0.7)
@@ -351,7 +348,7 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
             else:
                 print('Команда не найдена! Для вывода списка доступных команд введите - help.')
 
-    @log_client
+    # @log_client
     def add_contact(self, sock, username, contact):
         """Метод класса добавляющий пользователя в список контактов"""
         self.client_logger.debug(f'Попытка создать контакт - {contact}')
@@ -369,7 +366,7 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
             raise ServerError('Ошибка создания контакта')
         print('Контакт создан успешно.')
 
-    @log_client
+    # @log_client
     def edit_contacts(self):
         """Метод класса для редактирования контактов"""
         command = input('Введите delete для удаления или add добавления: ')
@@ -382,7 +379,7 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
                     self.client_logger.error(f'Попытка удаления несуществующего контакта {edit_contact}.')
         elif command == 'add':
             edit_contact = input('Введите имя добавляемого контакта: ')
-            if self.data_base.checker_contact(edit_contact):
+            if self.data_base.check_user(edit_contact):
                 with db_lock:
                     self.data_base.add_contact(edit_contact)
                 with socket_lock:
@@ -391,7 +388,7 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
                     except ServerError:
                         self.client_logger.error('Не удалось отправить данные на сервер.')
 
-    @log_client
+    # @log_client
     def history_print(self):
         """Метод класса для вывода истории сообщений"""
         command = input('Показать входящие сообщения - incoming, исходящие - outgoing, все - all: ')
@@ -417,11 +414,11 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
 class ClientReader(Client, Thread, metaclass=ClientVerifier):
     """Класс клиента отвечающий за чтение сообщений"""
 
-    def __init__(self, client_name, sock, db):
-        self.client_name = client_name
+    def __init__(self, client, sock, db):
+        self.client_name = client
         self.socket = sock
         self.data_base = db
-        super(ClientReader, self).__init__()
+        super().__init__()
 
     def run(self):
         """Метод класса отвечающий за запуск и работу клиента"""
@@ -438,7 +435,6 @@ class ClientReader(Client, Thread, metaclass=ClientVerifier):
                         break
                 # если сообщение корректное
                 else:
-
                     if self.conf['ACTION'] in message and message[self.conf['ACTION']] == self.conf['MESSAGE'] \
                             and self.conf['ADDRESSER'] in message and self.conf['TARGET'] in message \
                             and self.conf['MESS_TEXT'] in message and message[self.conf['TARGET']] == self.client_name:

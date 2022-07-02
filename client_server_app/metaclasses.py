@@ -1,5 +1,4 @@
 from dis import get_instructions
-from pprint import pprint
 
 
 class ServerVerifier(type):
@@ -37,7 +36,6 @@ class ClientVerifier(type):
             # разбор данных что в итераторе
             else:
                 for item in iterator:
-                    print(item)
                     if item.opname == 'LOAD_GLOBAL':
                         if item.argval not in methods_glob:
                             methods_glob.append(item.argval)

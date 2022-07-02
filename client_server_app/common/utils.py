@@ -6,18 +6,40 @@ from logging import getLogger
 from logs import server_log_config, client_log_config
 
 
-def log(func):
+# def log(func):
+#     def wrapper(*args, **kwargs):
+#         func_call = func(*args, **kwargs)
+#         logger_now = None
+#         date = ctime()
+#         call_from = stack()[1][3]
+#         if call_from == 'work_client' or call_from == 'get_answer' or call_from == 'data_connect_serv' or \
+#                 call_from == 'interactive_for_user' or call_from == 'message_server_from_user' or \
+#                 call_from == 'run':
+#             logger_now = getLogger('client')
+#         if call_from == 'work_server' or call_from == 'message_handler':
+#             logger_now = getLogger('server')
+#         logger_now.debug(f'{date} - функция {func.__name__} вызвана из функции {call_from}')
+#         return func_call
+#     return wrapper
+
+
+def log_client(func):
     def wrapper(*args, **kwargs):
         func_call = func(*args, **kwargs)
-        logger_now = None
         date = ctime()
         call_from = stack()[1][3]
-        if call_from == 'work_client' or call_from == 'get_answer' or call_from == 'data_connect_serv' or \
-                call_from == 'interactive_for_user' or call_from == 'message_server_from_user' or \
-                call_from == 'run':
-            logger_now = getLogger('client')
-        if call_from == 'work_server' or call_from == 'message_handler':
-            logger_now = getLogger('server')
+        logger_now = getLogger('client')
+        logger_now.debug(f'{date} - функция {func.__name__} вызвана из функции {call_from}')
+        return func_call
+    return wrapper
+
+
+def log_server(func):
+    def wrapper(*args, **kwargs):
+        func_call = func(*args, **kwargs)
+        date = ctime()
+        call_from = stack()[1][3]
+        logger_now = getLogger('server')
         logger_now.debug(f'{date} - функция {func.__name__} вызвана из функции {call_from}')
         return func_call
     return wrapper

@@ -8,7 +8,7 @@ from common.utils import get_message, send_message, read_conf
 from time import ctime
 from logging import getLogger
 import logs.server_log_config
-from common.utils import log
+from common.utils import log_server
 from descriptor import PortDescriptor
 from metaclasses import ServerVerifier
 from threading import Lock, Thread
@@ -22,6 +22,7 @@ new_connect = False
 flag_lock = Lock()
 
 
+# @log_server
 def get_item_args(name_arg):
     """Функция для поиска аргумента в списке аргументов"""
     conf_name = './common/config.yaml'
@@ -73,10 +74,8 @@ class Server(Thread, metaclass=ServerVerifier):
         server_sock.bind((self.addr_listen, self.port_listen))  # присваиваем порт и адрес
         server_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)  # устанавливаем опции сокета
         server_sock.settimeout(0.8)  # таймаут для операций с сокетом
-        print(server_sock)
         clients_list = list()
         messages_queue = list()
-        print(server_sock)
         server_sock.listen(conf['MAX_CONNECT'])  # слушаем порт
 
         while True:
@@ -100,11 +99,11 @@ class Server(Thread, metaclass=ServerVerifier):
             if len(r_list) > 0:
                 for r_client in r_list:
                     try:
-                        self.message_handler(get_message(r_client), messages_queue, r_client, clients_list,
-                                             self.client_names)
+                        self.message_handler(get_message(r_client), messages_queue, r_client, clients_list)
                     except (Exception,):
                         self.server_logger.info(f'Клиент {r_client.getpeername()} отключился от сервера')
-                        for name in self.client_names.keys():
+                        print(self.client_names, '@@@@@')
+                        for name in self.client_names:
                             if self.client_names[name] == r_client:
                                 self.db.user_logout(name)
                                 del self.client_names[name]
@@ -121,17 +120,20 @@ class Server(Thread, metaclass=ServerVerifier):
                     del self.client_names[item[conf['TARGET']]]
             messages_queue.clear()
 
-    @log
-    def message_handler(self, message, mess_list, client, clients, names):
+    # @log_server
+    def message_handler(self, message, mess_list, client, clients):
         """Обрабатывает сообщения от клиентов"""
         global new_connect
         self.server_logger.debug(f'Обработка сообщения от клиента - {message}')
         # если сообщение о присутствии клиента
         if self.conf['ACTION'] in message and message[self.conf['ACTION']] == self.conf['PRESENCE'] and \
                 self.conf['TIME'] in message and self.conf['USER_NAME'] in message:
-            if message[self.conf['USER_NAME']][self.conf['ACCOUNT_NAME']] not in names.keys():
+            if message[self.conf['USER_NAME']][self.conf['ACCOUNT_NAME']] not in self.client_names.keys():
                 client_now = message[self.conf['USER_NAME']][self.conf['ACCOUNT_NAME']]
-                names[client_now] = client
+                self.client_names[client_now] = client
+                ip, port = client.getpeername()
+                self.db.user_login(
+                    message[self.conf['USER_NAME']][self.conf['ACCOUNT_NAME']], ip, port)
                 response = {self.conf['RESPONSE']: 200}
                 send_message(client, response, conf_name=self.conf_name)
                 self.server_logger.debug(f'Присутствие клиента {response} - {client}')
@@ -158,10 +160,10 @@ class Server(Thread, metaclass=ServerVerifier):
                 self.conf['ACCOUNT_NAME'] in message:
             self.db.user_logout(self.conf['ACCOUNT_NAME'])
             self.server_logger.info(f'Клиент {self.conf["ACCOUNT_NAME"]} отключился от сервера')
-            clients.remove(names[message[self.conf['ACCOUNT_NAME']]])
-            names[message[self.conf['ACCOUNT_NAME']]].close()
+            clients.remove(self.client_names[message[self.conf['ACCOUNT_NAME']]])
+            self.client_names[message[self.conf['ACCOUNT_NAME']]].close()
             client_now = message[self.conf['ACCOUNT_NAME']]
-            del names[client_now]
+            del self.client_names[client_now]
             with flag_lock:
                 new_connect = True
             return
@@ -191,7 +193,7 @@ class Server(Thread, metaclass=ServerVerifier):
                 and self.client_names[message[self.conf['ACCOUNT_NAME']]] == client:
             response = {
                 self.conf['RESPONSE']: 202,
-                self.conf['DATA_LIST']: [user[0] for user in self.db.get_list_data('users')]
+                self.conf['DATA_LIST']: [user[0] for user in self.db.get_list_data('users')] # None!!!
             }
             send_message(client, response)
         # иначе (если некорректный запрос)
@@ -203,7 +205,7 @@ class Server(Thread, metaclass=ServerVerifier):
             send_message(client, form_message)
             return
 
-    @log
+    # @log_server
     def message_for_target(self, message, names, hear_socks):
         """Метод класса отправляющий сообщение определённому пользователю"""
         if message[self.conf['TARGET']] in names and names[message[self.conf['TARGET']]] in hear_socks:
@@ -217,6 +219,7 @@ class Server(Thread, metaclass=ServerVerifier):
                                      f'Отправка сообщения доступна лишь зарегестрированным пользователям!')
 
 
+# @log_server
 def main():
     dir_path = dirname(realpath(__file__))
     database = ServerStorage(dir_path)
@@ -249,6 +252,7 @@ def main():
             with flag_lock:
                 new_connect = False
 
+    # @log_server
     def print_statistics():
         """Функция вывода статистики клиентов для gui"""
         global statist_window
@@ -258,6 +262,7 @@ def main():
         statist_window.history_table.resizeRowsToContents()
         statist_window.show()
 
+    # @log_server
     def server_settings():
         """Функция для создания окна настроек сервера"""
         global settings_window
@@ -268,6 +273,7 @@ def main():
         settings_window.ip.insert(conf_db_serv['LISTEN_ADDR'])
         settings_window.save_btn.clicked.connect(save_server_settings)
 
+    # @log_server
     def save_server_settings():
         """Функция для сохранения настроек для gui"""
         global settings_window

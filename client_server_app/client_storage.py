@@ -50,7 +50,7 @@ class ClientStorage:
         # echo=True - ведение лога, poll_recycle=7200 - переустановка соединения с бд каждые 2 часа
         self.conf_name = './common/config_client_db.yaml'
         self.conf = read_conf(self.conf_name)
-        self.engine = create_engine(f'sqlite:///client_data.db3{path}/{self.conf["DB_NAME_FILE"]}', echo=True,
+        self.engine = create_engine(f'sqlite:///{path}/{self.conf["DB_NAME_FILE"]}', echo=True,
                                     pool_recycle=7200)
         self.Base.metadata.create_all(self.engine)  # создаём все таблицы
         session_fabric = sessionmaker(bind=self.engine)
