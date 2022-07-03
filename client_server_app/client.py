@@ -164,7 +164,6 @@ class Client:
             self.conf['ACCOUNT_NAME']: username
         }
         send_message(sock, req)
-        print(sock)
         answer = get_message(sock)
         if self.conf['RESPONSE'] in answer and answer[self.conf['RESPONSE']] == 202:
             return answer[self.conf['DATA_LIST']]
@@ -260,7 +259,6 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
         self.socket = sock
         self.data_base = db
         super(ClientAddresser, self).__init__()
-        print(self.conf['ADDR_DEF'])
 
     @log_client
     def create_out_message(self, account):
@@ -279,8 +277,7 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
 
         # проверка зарегистрирован ли получатель
         with db_lock:
-            print(target_user, 'checker!')
-            if not self.data_base.checker_contact(target_user):
+            if not self.data_base.checker_user(target_user):
                 self.client_logger.error(f'Попытка передать сообщение '
                                          f'незарегистрированому получателю: {target_user}')
                 return
@@ -378,11 +375,12 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
             with db_lock:
                 if self.data_base.checker_contact(edit_contact):
                     self.data_base.delete_contact(edit_contact)
+                    print(f'Удаление контакта {edit_contact} успешно.')
                 else:
                     self.client_logger.error(f'Попытка удаления несуществующего контакта {edit_contact}.')
         elif command == 'add':
             edit_contact = input('Введите имя добавляемого контакта: ')
-            if self.data_base.checker_contact(edit_contact):
+            if self.data_base.checker_user(edit_contact):
                 with db_lock:
                     self.data_base.add_contact(edit_contact)
                 with socket_lock:
@@ -390,6 +388,9 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
                         self.add_contact(self.socket, self.client_name, edit_contact)
                     except ServerError:
                         self.client_logger.error('Не удалось отправить данные на сервер.')
+            else:
+                print(f'Пользователя {edit_contact} не существует!\n'
+                      f'Вы можите добавить в контакты только существующих пользователей!')
 
     @log_client
     def history_print(self):
@@ -402,7 +403,7 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
                     print(f'\nСообщение от пользователя: {message[0]} '
                           f'от {message[3]}:\n{message[2]}')
             elif command == 'outgoing':
-                history_list = self.data_base.get_history(from_who=self.client_name)
+                history_list = self.data_base.get_history_messages(from_who=self.client_name)
                 for message in history_list:
                     print(f'\nСообщение пользователю: {message[1]} '
                           f'от {message[3]}:\n{message[2]}')
@@ -438,30 +439,22 @@ class ClientReader(Client, Thread, metaclass=ClientVerifier):
                         break
                 # если сообщение корректное
                 else:
-
-                    if self.conf['ACTION'] in message and message[self.conf['ACTION']] == self.conf['MESSAGE'] \
-                            and self.conf['ADDRESSER'] in message and self.conf['TARGET'] in message \
-                            and self.conf['MESS_TEXT'] in message and message[self.conf['TARGET']] == self.client_name:
-                        print(f'\n Получено сообщение от пользователя '
-                              f'{message[self.conf["ADDRESSER"]]}:\n{message[self.conf["MESS_TEXT"]]}')
-                        # Сохранение в бд сообщения
-                        with db_lock:
-                            try:
-                                self.data_base.save_message(message[self.conf['ADDRESSER']], self.client_name,
-                                                            message[self.conf['MESS_TEXT']])
-                            except Exception as err:
-                                print(err)
-                                self.client_logger.error('Ошибка взаимодействия с базой данных')
-
-                        self.client_logger.info(f'Получено сообщение от пользователя '
-                                                f'{message[self.conf["ADDRESSER"]]}:'
-                                                f'\n{message[self.conf["MESS_TEXT"]]}')
-                    else:
-                        self.client_logger.error(f'Получено некорректное сообщение с сервера: {message}')
+                    if message is not None:
+                        if self.conf['ACTION'] in message and message[self.conf['ACTION']] == self.conf['MESSAGE'] \
+                                and self.conf['ADDRESSER'] in message and self.conf['TARGET'] in message \
+                                and self.conf['MESS_TEXT'] in message \
+                                and message[self.conf['TARGET']] == self.client_name:
+                            print(f'\n Получено сообщение от пользователя '
+                                  f'{message[self.conf["ADDRESSER"]]}:\n{message[self.conf["MESS_TEXT"]]}')
+                            self.client_logger.info(f'Получено сообщение от пользователя '
+                                                    f'{message[self.conf["ADDRESSER"]]}:'
+                                                    f'\n{message[self.conf["MESS_TEXT"]]}')
+                        else:
+                            self.client_logger.error(f'Получено некорректное сообщение с сервера: {message}')
 
 
-client = Client()
-client.main()
+# client = Client()
+# client.main()
 
 if __name__ == '__main__':
     client = Client()

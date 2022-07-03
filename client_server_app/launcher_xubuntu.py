@@ -30,7 +30,7 @@ class Launcher:
                 self.process.append(self.get_subproc('server.py'))
 
                 for i in range(2):
-                    self.process.append(self.get_subproc(f'client.py -n client{i + 1}'))
+                    self.process.append(self.get_subproc('client.py'))
 
             elif command == 'close':
                 while len(self.process) > 0:

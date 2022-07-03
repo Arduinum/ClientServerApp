@@ -1,3 +1,5 @@
+from os.path import dirname, realpath
+
 from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime
 from sqlalchemy.orm import sessionmaker, declarative_base
 from datetime import datetime
@@ -122,6 +124,13 @@ class ClientStorage:
         """Метод класса возращает список известных пользователей"""
         return [user[0] for user in self.session.query(self.FamousUsers.login).all()]
 
+    def checker_user(self, login):
+        """Метод класса для проверки известный ли клиенту пользователь"""
+        if self.session.query(self.FamousUsers).filter_by(login=login).count():
+            return True
+        else:
+            return False
+
     def checker_contact(self, contact_login):
         """Метод класса проверяет есть ли контакт в контактах"""
         if self.session.query(self.UserContacts).filter_by(contact_login=contact_login).count():
@@ -141,7 +150,9 @@ class ClientStorage:
 
 
 if __name__ == '__main__':
-    client_storage = ClientStorage()
+    dir_path = dirname(realpath(__file__))
+    client_storage = ClientStorage(dir_path)
+    client_storage.table_clear('all')
     # client_storage.add_contact('bot628')
     # client_storage.add_contact('botT1000')
     # client_storage.add_contact('WalleT34')
@@ -152,4 +163,3 @@ if __name__ == '__main__':
     # client_storage.save_message('WalleT34', 'botT1000', 'Hello botT1000')
     # print(client_storage.checker_contact('botT1000'))
     # print(client_storage.get_history_messages(from_who='WalleT34'))
-    client_storage.table_clear('all')
