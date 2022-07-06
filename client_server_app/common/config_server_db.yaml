@@ -1,0 +1,4 @@
+DB_NAME_FILE: sever_data.db3
+DB_PATH: ''
+DEFAULT_PORT: 7777
+LISTEN_ADDR: ''
