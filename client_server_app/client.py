@@ -13,6 +13,8 @@ from metaclasses import ClientVerifier
 import logs.client_log_config
 from server import ServerError
 from client_storage import ClientStorage
+from yaml import dump
+
 
 # Объект для блокировки сокета и работы с базой данных
 socket_lock = Lock()
@@ -24,6 +26,8 @@ class Client:
 
     def __init__(self):
         self.conf_name = './common/config.yaml'
+        self.conf_client_db_name = './common/config_client_db.yaml'
+        self.conf_client_db = read_conf(self.conf_client_db_name)
         self.conf = read_conf(self.conf_name)
         self.client_logger = getLogger('client')
         super(Client, self).__init__()
@@ -205,51 +209,6 @@ class Client:
             for contact in contacts_list:
                 database.add_contact(contact)
 
-    def main(self):
-        """Главный метод класса, который запускает обе части клеентов"""
-        print('Старт клиентского модуля.')
-        data_connect_server = self.data_connect_serv()
-        addr_server, port_server, name_client = data_connect_server['addr_server'], \
-            data_connect_server['port_server'], data_connect_server['name_client']
-        self.client_logger.info(f'Старт работы клиента с параметрами: адрес сервера - {addr_server}, '
-                                f'порт: {port_server}, имя пользователя {name_client}.')
-
-        try:
-            server_sock = socket(AF_INET, SOCK_STREAM)  # создаём сокет TCP
-            server_sock.settimeout(1.2)
-            server_sock.connect((data_connect_server['addr_server'], data_connect_server['port_server']))
-            message_to_serv = self.request_presence(name_client)
-            self.client_logger.info(f'Сообщение для сервера сформировано успешно.')
-            send_message(server_sock, message_to_serv, self.conf_name)
-            self.client_logger.info(f'Сообщение для сервера отправлено успешно.')
-            answer = self.get_answer(server_sock)
-            self.client_logger.info(f'Пришёл ответ от сервера - {answer}')
-            print('Соединение с сервером установлено.')
-        except (ConnectionRefusedError, ConnectionError):
-            self.client_logger.critical(f'Подключение к серверу {addr_server}:{port_server} не удалось!')
-            exit(1)
-        except ServerError as error:
-            self.client_logger.error(f'При установлении соединения сервер вернул ошибку: {error.text}')
-            exit(1)
-        else:
-            dir_path = dirname(realpath(__file__))
-            data_base = ClientStorage(dir_path)
-            self.load_db(server_sock, data_base, name_client)
-
-            module_addresser = ClientAddresser(name_client, server_sock, data_base)
-            module_addresser.daemon = True
-            module_addresser.start()
-
-            module_receiver = ClientReader(name_client, server_sock, data_base)
-            module_receiver.daemon = True
-            module_receiver.start()
-
-            while True:
-                sleep(1.2)
-                if module_receiver.is_alive() and module_addresser.is_alive():
-                    continue
-                break
-
 
 class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
     """Класс клиента отвечающий за отправку сообщений"""
@@ -274,6 +233,10 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
         """Возвращает введённое сообщение"""
         target_user = input('Введите имя пользователя:\n')
         message = input('Введите текст сообщения или команду --> для завершения работы:\n')
+
+        # подгружаем обновления с сервера
+        with db_lock and socket_lock:
+            self.load_db(self.socket, self.data_base, self.client_name)
 
         # проверка зарегистрирован ли получатель
         with db_lock:
@@ -380,6 +343,8 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
                     self.client_logger.error(f'Попытка удаления несуществующего контакта {edit_contact}.')
         elif command == 'add':
             edit_contact = input('Введите имя добавляемого контакта: ')
+            with db_lock and socket_lock:
+                self.load_db(self.socket, self.data_base, self.client_name)
             if self.data_base.checker_user(edit_contact):
                 with db_lock:
                     self.data_base.add_contact(edit_contact)
@@ -453,9 +418,59 @@ class ClientReader(Client, Thread, metaclass=ClientVerifier):
                             self.client_logger.error(f'Получено некорректное сообщение с сервера: {message}')
 
 
-# client = Client()
-# client.main()
+def main():
+    """Главная функция, которая запускает обе части клеентов"""
+    print('Старт клиентского модуля.')
+    client_cl = Client()
+    data_connect_server = client_cl.data_connect_serv()
+    addr_server, port_server, name_client = data_connect_server['addr_server'], \
+        data_connect_server['port_server'], data_connect_server['name_client']
+    client_cl.client_logger.info(f'Старт работы клиента с параметрами: адрес сервера - {addr_server}, '
+                                 f'порт: {port_server}, имя пользователя {name_client}.')
+
+    try:
+        server_sock = socket(AF_INET, SOCK_STREAM)  # создаём сокет TCP
+        server_sock.settimeout(1.2)
+        server_sock.connect((data_connect_server['addr_server'], data_connect_server['port_server']))
+        message_to_serv = client_cl.request_presence(name_client)
+        client_cl.client_logger.info(f'Сообщение для сервера сформировано успешно.')
+        send_message(server_sock, message_to_serv, client_cl.conf_name)
+        client_cl.client_logger.info(f'Сообщение для сервера отправлено успешно.')
+        answer = client_cl.get_answer(server_sock)
+        client_cl.client_logger.info(f'Пришёл ответ от сервера - {answer}')
+        print('Соединение с сервером установлено.')
+    except (ConnectionRefusedError, ConnectionError):
+        client_cl.client_logger.critical(f'Подключение к серверу {addr_server}:{port_server} не удалось!')
+        exit(1)
+    except ServerError as error:
+        client_cl.client_logger.error(f'При установлении соединения сервер вернул ошибку: {error.text}')
+        exit(1)
+    else:
+        dir_path = dirname(realpath(__file__))
+
+        client_cl.conf_client_db['DB_NAME_FILE'] = name_client
+        with open(client_cl.conf_client_db_name, 'w', encoding='utf-8') as file:
+            dump(client_cl.conf_client_db, file, default_flow_style=False)
+
+        data_base = ClientStorage(dir_path)
+        client_cl.load_db(server_sock, data_base, name_client)
+
+        module_addresser = ClientAddresser(name_client, server_sock, data_base)
+        module_addresser.daemon = True
+        module_addresser.start()
+
+        module_receiver = ClientReader(name_client, server_sock, data_base)
+        module_receiver.daemon = True
+        module_receiver.start()
+
+        while True:
+            sleep(1.2)
+            if module_receiver.is_alive() and module_addresser.is_alive():
+                continue
+            break
+
+
+# main()
 
 if __name__ == '__main__':
-    client = Client()
-    client.main()
+    main()
