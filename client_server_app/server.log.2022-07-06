@@ -46,26 +46,3 @@
 2022-07-06 23:31:11,338 - DEBUG - descriptor - Получение порта для прослушивания сервером
 2022-07-06 23:31:11,338 - INFO - descriptor - Получен порт для прослушивания сервером - 7777
 2022-07-06 23:31:11,339 - INFO - server - Старт сервера на адресе 0.0.0.0:7777, использующимся для подключения.
-2022-07-08 14:41:48,138 - INFO - server - Пришёл запрос от клиента на соединение ('127.0.0.1', 44394)
-2022-07-08 14:41:48,140 - DEBUG - server - Обработка сообщения от клиента - {'action': 'presence', 'time': 'Fri Jul  8 14:41:48 2022', 'user': {'account_name': 'cl1'}}
-2022-07-08 14:41:48,175 - DEBUG - server - Присутствие клиента {'response': 200} - <socket.socket fd=23, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 7777), raddr=('127.0.0.1', 44394)>
-2022-07-08 14:41:48,204 - DEBUG - utils - Fri Jul  8 14:41:48 2022 - функция message_handler вызвана из функции run
-2022-07-08 14:41:49,007 - DEBUG - server - Обработка сообщения от клиента - {'action': 'get_users', 'time': 'Fri Jul  8 14:41:48 2022', 'account_name': 'cl1'}
-2022-07-08 14:41:49,011 - DEBUG - utils - Fri Jul  8 14:41:49 2022 - функция message_handler вызвана из функции run
-2022-07-08 14:41:49,818 - DEBUG - server - Обработка сообщения от клиента - {'action': 'get_contacts', 'time': 'Fri Jul  8 14:41:49 2022', 'user': 'cl1'}
-2022-07-08 14:41:49,824 - DEBUG - utils - Fri Jul  8 14:41:49 2022 - функция message_handler вызвана из функции run
-2022-07-08 14:42:56,252 - DEBUG - server - Обработка сообщения от клиента - {'action': 'out', 'time': 'Fri Jul  8 14:42:55 2022', 'account_name': 'cl1'}
-2022-07-08 14:42:56,258 - INFO - server - Клиент cl1 отключился от сервера
-2022-07-08 14:42:56,258 - DEBUG - utils - Fri Jul  8 14:42:56 2022 - функция message_handler вызвана из функции run
-2022-07-08 14:50:24,480 - INFO - server - Пришёл запрос от клиента на соединение ('127.0.0.1', 44398)
-2022-07-08 14:50:25,285 - DEBUG - server - Обработка сообщения от клиента - {'action': 'presence', 'time': 'Fri Jul  8 14:50:24 2022', 'user': {'account_name': 'cl1'}}
-2022-07-08 14:50:25,301 - DEBUG - server - Присутствие клиента {'response': 200} - <socket.socket fd=23, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 7777), raddr=('127.0.0.1', 44398)>
-2022-07-08 14:50:25,301 - DEBUG - utils - Fri Jul  8 14:50:25 2022 - функция message_handler вызвана из функции run
-2022-07-08 14:50:26,107 - DEBUG - server - Обработка сообщения от клиента - {'action': 'get_users', 'time': 'Fri Jul  8 14:50:25 2022', 'account_name': 'cl1'}
-2022-07-08 14:50:26,110 - DEBUG - utils - Fri Jul  8 14:50:26 2022 - функция message_handler вызвана из функции run
-2022-07-08 14:50:26,915 - DEBUG - server - Обработка сообщения от клиента - {'action': 'get_contacts', 'time': 'Fri Jul  8 14:50:26 2022', 'user': 'cl1'}
-2022-07-08 14:50:26,919 - DEBUG - utils - Fri Jul  8 14:50:26 2022 - функция message_handler вызвана из функции run
-2022-07-08 14:50:57,484 - DEBUG - server - Обработка сообщения от клиента - {'action': 'out', 'time': 'Fri Jul  8 14:50:56 2022', 'account_name': 'cl1'}
-2022-07-08 14:50:57,490 - INFO - server - Клиент cl1 отключился от сервера
-2022-07-08 14:50:57,490 - DEBUG - utils - Fri Jul  8 14:50:57 2022 - функция message_handler вызвана из функции run
-2022-07-08 14:51:01,627 - DEBUG - utils - Fri Jul  8 14:51:01 2022 - функция main вызвана из функции <module>

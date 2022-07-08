@@ -19,6 +19,7 @@ class ServerStorage:
         def __init__(self, login):
             self.login = login
             self.last_entry_time = datetime.now()
+            super().__init__()
 
     class ActiveUsers(Base):
         """Класс для создания таблицы"""
@@ -34,6 +35,7 @@ class ServerStorage:
             self.entry_time = entry_time
             self.ip_address = ip_address
             self.port = port
+            super().__init__()
 
     class HistoryLogins(Base):
         """Класс для создания таблицы"""
@@ -49,6 +51,7 @@ class ServerStorage:
             self.entry_time = entry_time
             self.ip_address = ip_address
             self.port = port
+            super().__init__()
 
     class UsersContacts(Base):
         """Класс контакты пользователей"""
@@ -60,6 +63,7 @@ class ServerStorage:
         def __init__(self, login_id, contact_login_id):
             self.login_id = login_id
             self.contact_login_id = contact_login_id
+            super().__init__()
 
     class UsersHistory(Base):
         """Класс история действий пользователей"""
@@ -152,6 +156,8 @@ class ServerStorage:
                 self.session.query(self.AllUsers).delete()
                 self.session.query(self.ActiveUsers).delete()
                 self.session.query(self.HistoryLogins).delete()
+                self.session.query(self.UsersContacts).delete()
+                self.session.query(self.UsersHistory).delete()
                 self.session.commit()
             else:
                 eval(f'self.session.query(self.{command}).delete()')

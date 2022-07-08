@@ -209,6 +209,7 @@ class Server(Thread, metaclass=ServerVerifier):
         """Метод класса отправляющий сообщение определённому пользователю"""
         if message[self.conf['TARGET']] in names and names[message[self.conf['TARGET']]] in hear_socks:
             send_message(names[message[self.conf['TARGET']]], message, conf_name=self.conf_name)
+            self.db.working_message(message[self.conf["ADDRESSER"]], message[self.conf["TARGET"]])
             self.server_logger.info(f'Сообщение пользователю {message[self.conf["TARGET"]]} отправлено успешно.\n'
                                     f'Отправитель {message[self.conf["ADDRESSER"]]}.')
         elif message[self.conf['TARGET']] in names and names[message[self.conf['TARGET']]] not in hear_socks:
@@ -251,7 +252,6 @@ def main():
             with flag_lock:
                 new_connect = False
 
-    @log_server
     def print_statistics():
         """Функция вывода статистики клиентов для gui"""
         global statist_window
@@ -261,18 +261,16 @@ def main():
         statist_window.history_table.resizeRowsToContents()
         statist_window.show()
 
-    @log_server
     def server_settings():
         """Функция для создания окна настроек сервера"""
         global settings_window
         settings_window = SettingsWindow()
         settings_window.db_path.insert(dir_path)
         settings_window.db_file.insert(conf_db_serv['DB_NAME_FILE'])
-        settings_window.port.insert(conf_db_serv['DEFAULT_PORT'])
+        settings_window.port.insert(str(conf_db_serv['DEFAULT_PORT']))
         settings_window.ip.insert(conf_db_serv['LISTEN_ADDR'])
         settings_window.save_btn.clicked.connect(save_server_settings)
 
-    @log_server
     def save_server_settings():
         """Функция для сохранения настроек для gui"""
         global settings_window

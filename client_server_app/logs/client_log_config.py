@@ -8,7 +8,7 @@ logger = getLogger('client')
 format_message = Formatter('%(asctime)s - %(levelname)s - %(module)s - %(message)s')
 
 # обработчик для логирования в файл
-file_hand = FileHandler(path.abspath('client.log'), encoding='utf-8')
+file_hand = FileHandler(path.abspath('client/client.log'), encoding='utf-8')
 file_hand.setLevel(DEBUG)
 file_hand.setFormatter(format_message)
 

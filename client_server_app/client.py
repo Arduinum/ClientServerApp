@@ -4,15 +4,14 @@ from sys import argv, exit
 from socket import socket, AF_INET, SOCK_STREAM
 from json import JSONDecodeError
 from time import ctime, sleep
-from common.utils import send_message, get_message, read_conf
+from common.utils import send_message, get_message, read_conf, log_client
 from logging import getLogger
-from common.utils import log_client
 # Thread - класс для работы с потоками
 from threading import Thread, Lock
 from metaclasses import ClientVerifier
 import logs.client_log_config
 from server import ServerError
-from client_storage import ClientStorage
+from client.client_storage import ClientStorage
 from yaml import dump
 
 
@@ -259,15 +258,18 @@ class ClientAddresser(Client, Thread, metaclass=ClientVerifier):
         }
         self.client_logger.debug(f'Сформеровано сообщение: {data_message}')
 
-        # сохранение сообщения для истории сообщений
-        with db_lock:
-            self.data_base.save_message(account, target_user, message)
-
         # дожидаемся чтоб сокет был освобождён
         with socket_lock:
             try:
-                send_message(serv_sock, data_message, self.conf_name)
-                self.client_logger.debug(f'Сообщение для пользователя {target_user} отправлено успешно')
+                if account != target_user:
+                    send_message(serv_sock, data_message, self.conf_name)
+                    self.client_logger.debug(f'Сообщение для пользователя {target_user} отправлено успешно')
+                    # сохранение сообщения для истории сообщений
+                    with db_lock:
+                        self.data_base.save_message(account, target_user, message)
+                else:
+                    print('Вы не можите оптавить сообщение сами себе!')
+                    self.client_logger.info(f'Попытка пользователя {account} отправить сообщение самому себе!')
             except Exception as err:
                 self.client_logger.critical(f'{err}, соединение с сервером было потеряно')
                 exit(1)
@@ -446,13 +448,11 @@ def main():
         client_cl.client_logger.error(f'При установлении соединения сервер вернул ошибку: {error.text}')
         exit(1)
     else:
-        dir_path = dirname(realpath(__file__))
-
         client_cl.conf_client_db['DB_NAME_FILE'] = name_client
         with open(client_cl.conf_client_db_name, 'w', encoding='utf-8') as file:
             dump(client_cl.conf_client_db, file, default_flow_style=False)
 
-        data_base = ClientStorage(dir_path)
+        data_base = ClientStorage()
         client_cl.load_db(server_sock, data_base, name_client)
 
         module_addresser = ClientAddresser(name_client, server_sock, data_base)

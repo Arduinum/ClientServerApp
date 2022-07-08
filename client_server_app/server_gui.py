@@ -26,10 +26,11 @@ def gui_create(db):
 
 def create_history_mess(db):
     """Функция для заполнения истории сообщений"""
-    hist_list = db.message_history()
+    hist_list = db.get_message_count()
     list_table = QStandardItemModel()
     list_table.setHorizontalHeaderLabels(
         ['Клиент', 'Последний вход', 'Отправил сообщений', 'Получил сообщений'])
+    print(hist_list)
     for line in hist_list:
         user, last_seen, sent, received = line
         user = QStandardItem(user)
