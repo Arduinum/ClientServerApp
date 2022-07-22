@@ -16,17 +16,19 @@ from server_storage import ServerStorage
 from server_gui import MainWindow, HistoryUsersWindow, SettingsWindow, gui_create, create_history_mess
 from os.path import dirname, realpath
 from yaml import dump
+from common.config_path_file import CONFIG_PATH, CONFIG_SERVER_DB_PATH
 
 # флаг для определения подключенного нового пользователя (для экономии запросов к бд)
 new_connect = False
 flag_lock = Lock()
 
+conf = read_conf(CONFIG_PATH)
+conf_db_serv = read_conf(CONFIG_SERVER_DB_PATH)
+
 
 @log_server
 def get_item_args(name_arg):
     """Функция для поиска аргумента в списке аргументов"""
-    conf_name = './common/config.yaml'
-    conf = read_conf(conf_name)
 
     if name_arg == 'port':
         for p in argv:
@@ -48,9 +50,6 @@ class Server(Thread, metaclass=ServerVerifier):
     port_listen = PortDescriptor()
 
     def __init__(self, addr, port, db):
-        self.conf_name = './common/config.yaml'
-        self.conf_serv_db_name = './common/config_server_db.yaml'
-        self.conf = read_conf(self.conf_name)
         self.server_logger = getLogger('server')
         self.addr_listen = addr
         self.port_listen = port
@@ -69,7 +68,6 @@ class Server(Thread, metaclass=ServerVerifier):
             self.server_logger.info(
                 f'Старт сервера на адресе {self.addr_listen}:{self.port_listen}, использующимся для подключения.')
 
-        conf = read_conf(self.conf_name)
         server_sock = socket(AF_INET, SOCK_STREAM)  # создаём сокет TCP
         server_sock.bind((self.addr_listen, self.port_listen))  # присваиваем порт и адрес
         server_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)  # устанавливаем опции сокета
@@ -125,81 +123,81 @@ class Server(Thread, metaclass=ServerVerifier):
         global new_connect
         self.server_logger.debug(f'Обработка сообщения от клиента - {message}')
         # если сообщение о присутствии клиента
-        if self.conf['ACTION'] in message and message[self.conf['ACTION']] == self.conf['PRESENCE'] and \
-                self.conf['TIME'] in message and self.conf['USER_NAME'] in message:
-            if message[self.conf['USER_NAME']][self.conf['ACCOUNT_NAME']] not in self.client_names.keys():
-                client_now = message[self.conf['USER_NAME']][self.conf['ACCOUNT_NAME']]
+        if conf['ACTION'] in message and message[conf['ACTION']] == conf['PRESENCE'] and \
+                conf['TIME'] in message and conf['USER_NAME'] in message:
+            if message[conf['USER_NAME']][conf['ACCOUNT_NAME']] not in self.client_names.keys():
+                client_now = message[conf['USER_NAME']][conf['ACCOUNT_NAME']]
                 self.client_names[client_now] = client
                 ip, port = client.getpeername()
                 self.db.user_login(
-                    message[self.conf['USER_NAME']][self.conf['ACCOUNT_NAME']], ip, port)
-                response = {self.conf['RESPONSE']: 200}
-                send_message(client, response, conf_name=self.conf_name)
+                    message[conf['USER_NAME']][conf['ACCOUNT_NAME']], ip, port)
+                response = {conf['RESPONSE']: 200}
+                send_message(client, response, conf_name=CONFIG_PATH)
                 self.server_logger.debug(f'Присутствие клиента {response} - {client}')
                 with flag_lock:
                     new_connect = True
             else:
                 response = {
-                    self.conf['RESPONSE']: 400,
-                    self.conf['ERROR']: 'Такое имя пользователя уже существует!'
+                    conf['RESPONSE']: 400,
+                    conf['ERROR']: 'Такое имя пользователя уже существует!'
                 }
-                send_message(client, response, conf_name=self.conf_name)
+                send_message(client, response, conf_name=CONFIG_PATH)
                 clients.remove(client)
                 client.close()
-                self.server_logger.debug(f'Имя пользователя {message[self.conf["USER_NAME"]]} уже существует!')
+                self.server_logger.debug(f'Имя пользователя {message[conf["USER_NAME"]]} уже существует!')
             return
         # если это сообщение от пользователя
-        elif self.conf['ACTION'] in message and message[self.conf['ACTION']] == self.conf['MESSAGE'] and \
-                self.conf['TIME'] in message and self.conf['MESS_TEXT'] in message and self.conf['TARGET'] in message \
-                and self.conf['ADDRESSER'] in message:
+        elif conf['ACTION'] in message and message[conf['ACTION']] == conf['MESSAGE'] and \
+                conf['TIME'] in message and conf['MESS_TEXT'] in message and conf['TARGET'] in message \
+                and conf['ADDRESSER'] in message:
             mess_list.append(message)
             return
         # если клиент решил выйти
-        elif self.conf['ACTION'] in message and message[self.conf['ACTION']] == self.conf['OUT'] and \
-                self.conf['ACCOUNT_NAME'] in message:
-            self.db.user_logout(message[self.conf['ACCOUNT_NAME']])
-            self.server_logger.info(f'Клиент {message[self.conf["ACCOUNT_NAME"]]} отключился от сервера')
-            clients.remove(self.client_names[message[self.conf['ACCOUNT_NAME']]])
-            self.client_names[message[self.conf['ACCOUNT_NAME']]].close()
-            client_now = message[self.conf['ACCOUNT_NAME']]
+        elif conf['ACTION'] in message and message[conf['ACTION']] == conf['OUT'] and \
+                conf['ACCOUNT_NAME'] in message:
+            self.db.user_logout(message[conf['ACCOUNT_NAME']])
+            self.server_logger.info(f'Клиент {message[conf["ACCOUNT_NAME"]]} отключился от сервера')
+            clients.remove(self.client_names[message[conf['ACCOUNT_NAME']]])
+            self.client_names[message[conf['ACCOUNT_NAME']]].close()
+            client_now = message[conf['ACCOUNT_NAME']]
             del self.client_names[client_now]
             with flag_lock:
                 new_connect = True
             return
         # если делает запрос контакт
-        elif self.conf['ACTION'] in message and message[self.conf['ACTION']] == self.conf['GET_CONTACTS'] \
-                and self.conf['USER_NAME'] in message and self.client_names[message[self.conf['USER_NAME']]] == client:
+        elif conf['ACTION'] in message and message[conf['ACTION']] == conf['GET_CONTACTS'] \
+                and conf['USER_NAME'] in message and self.client_names[message[conf['USER_NAME']]] == client:
             response = {
-                self.conf['RESPONSE']: 202,
-                self.conf['DATA_LIST']: self.db.get_users_contacts(message[self.conf['USER_NAME']])
+                conf['RESPONSE']: 202,
+                conf['DATA_LIST']: self.db.get_users_contacts(message[conf['USER_NAME']])
             }
             send_message(client, response)
         # если запрос на добавление контакта
-        elif self.conf['ACTION'] in message and message[self.conf['ACTION']] == self.conf['ADD_CONTACT'] \
-                and self.conf['ACCOUNT_NAME'] in message and self.conf['USER_NAME'] in message \
-                and self.client_names[message[self.conf['USER_NAME']]] == client:
-            self.db.add_contact(message[self.conf['USER_NAME']], message[self.conf['ACCOUNT_NAME']])
-            send_message(client, {self.conf['RESPONSE']: 200})
+        elif conf['ACTION'] in message and message[conf['ACTION']] == conf['ADD_CONTACT'] \
+                and conf['ACCOUNT_NAME'] in message and conf['USER_NAME'] in message \
+                and self.client_names[message[conf['USER_NAME']]] == client:
+            self.db.add_contact(message[conf['USER_NAME']], message[conf['ACCOUNT_NAME']])
+            send_message(client, {conf['RESPONSE']: 200})
         # если запрос на удаление контакта
-        elif self.conf['ACTION'] in message and message[self.conf['ACTION']] == self.conf['DEL_CONTACT'] \
-                and self.conf['ACCOUNT_NAME'] in message and self.conf['USER_NAME'] in message \
-                and self.client_names[message[self.conf['USER_NAME']]] == client:
-            self.db.delete_contact(message[self.conf['USER_NAME']], message[self.conf['ACCOUNT_NAME']])
-            send_message(client, {self.conf['RESPONSE']: 200})
+        elif conf['ACTION'] in message and message[conf['ACTION']] == conf['DEL_CONTACT'] \
+                and conf['ACCOUNT_NAME'] in message and conf['USER_NAME'] in message \
+                and self.client_names[message[conf['USER_NAME']]] == client:
+            self.db.delete_contact(message[conf['USER_NAME']], message[conf['ACCOUNT_NAME']])
+            send_message(client, {conf['RESPONSE']: 200})
         # если запрос от известного пользователя
-        elif self.conf['ACTION'] in message and message[self.conf['ACTION']] == self.conf['GET_USERS'] \
-                and self.conf['ACCOUNT_NAME'] in message \
-                and self.client_names[message[self.conf['ACCOUNT_NAME']]] == client:
+        elif conf['ACTION'] in message and message[conf['ACTION']] == conf['GET_USERS'] \
+                and conf['ACCOUNT_NAME'] in message \
+                and self.client_names[message[conf['ACCOUNT_NAME']]] == client:
             response = {
-                self.conf['RESPONSE']: 202,
-                self.conf['DATA_LIST']: [user[0] for user in self.db.get_list_data('users')] # None!!!
+                conf['RESPONSE']: 202,
+                conf['DATA_LIST']: [user[0] for user in self.db.get_list_data('users')]
             }
             send_message(client, response)
         # иначе (если некорректный запрос)
         else:
             form_message = {
-                self.conf['RESPONSE']: 400,
-                self.conf['ERROR']: 'Bad Request'
+                conf['RESPONSE']: 400,
+                conf['ERROR']: 'Bad Request'
             }
             send_message(client, form_message)
             return
@@ -207,15 +205,15 @@ class Server(Thread, metaclass=ServerVerifier):
     @log_server
     def message_for_target(self, message, names, hear_socks):
         """Метод класса отправляющий сообщение определённому пользователю"""
-        if message[self.conf['TARGET']] in names and names[message[self.conf['TARGET']]] in hear_socks:
-            send_message(names[message[self.conf['TARGET']]], message, conf_name=self.conf_name)
-            self.db.working_message(message[self.conf["ADDRESSER"]], message[self.conf["TARGET"]])
-            self.server_logger.info(f'Сообщение пользователю {message[self.conf["TARGET"]]} отправлено успешно.\n'
-                                    f'Отправитель {message[self.conf["ADDRESSER"]]}.')
-        elif message[self.conf['TARGET']] in names and names[message[self.conf['TARGET']]] not in hear_socks:
+        if message[conf['TARGET']] in names and names[message[conf['TARGET']]] in hear_socks:
+            send_message(names[message[conf['TARGET']]], message, conf_name=CONFIG_PATH)
+            self.db.working_message(message[conf["ADDRESSER"]], message[conf["TARGET"]])
+            self.server_logger.info(f'Сообщение пользователю {message[conf["TARGET"]]} отправлено успешно.\n'
+                                    f'Отправитель {message[conf["ADDRESSER"]]}.')
+        elif message[conf['TARGET']] in names and names[message[conf['TARGET']]] not in hear_socks:
             raise ConnectionError
         else:
-            self.server_logger.error(f'Пользователь {message[self.conf["TARGET"]]} должен пройти регистрацию!\n'
+            self.server_logger.error(f'Пользователь {message[conf["TARGET"]]} должен пройти регистрацию!\n'
                                      f'Отправка сообщения доступна лишь зарегестрированным пользователям!')
 
 
@@ -223,15 +221,10 @@ class Server(Thread, metaclass=ServerVerifier):
 def main():
     dir_path = dirname(realpath(__file__))
     database = ServerStorage(dir_path)
-    conf_name = './common/config.yaml'
-    conf = read_conf(conf_name)
     listen_port = get_item_args('port')
     server = Server(conf['ADDR_LISTEN_DEF'], listen_port, database)
     server.daemon = True
     server.start()
-
-    conf_db_serv = read_conf(server.conf_serv_db_name)
-
     # создаст gui для сервера
     server_gui = QApplication(argv)
     main_window = MainWindow()
@@ -285,7 +278,7 @@ def main():
             conf_db_serv['LISTEN_ADDR'] = settings_window.ip.text()
             if 1023 < port < 65536:
                 conf_db_serv['DEFAULT_PORT'] = str(port)
-                with open(server.conf_serv_db_name, 'w', encoding='utf-8') as file:
+                with open(CONFIG_SERVER_DB_PATH, 'w', encoding='utf-8') as file:
                     dump(conf_db_serv, file, default_flow_style=False)
                     message.information(
                         settings_window, 'Успех', 'Настройки успешно сохранены!')
@@ -299,13 +292,12 @@ def main():
     timer = QTimer()
     timer.timeout.connect(updater_list)
     timer.start(1200)
-
     # Для связывания кнопки с процедурами
     main_window.refresh_button.triggered.connect(updater_list)
     main_window.show_history_button.triggered.connect(print_statistics)
     main_window.config_btn.triggered.connect(server_settings)
     # Запуск gui
-    server_gui.exec_()  # сервер и gui не работают вместе!
+    server_gui.exec_()
 
 
 # main()

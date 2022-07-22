@@ -8,7 +8,7 @@ class ServerVerifier(type):
         for key in meta_dict.keys():
             try:
                 iterator = get_instructions(meta_dict[key])
-            except TypeError:
+            except (TypeError, SyntaxError):
                 pass
             # разбор данных что в итераторе
             else:

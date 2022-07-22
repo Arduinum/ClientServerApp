@@ -1,5 +1,7 @@
+from sys import path as sys_path
+sys_path.append('../')
 from logging import getLogger, Formatter, StreamHandler, handlers, FileHandler, DEBUG
-from os import path
+from os.path import dirname, abspath
 from time import strftime
 
 
@@ -9,8 +11,10 @@ logger = getLogger('server')
 format_message = Formatter('%(asctime)s - %(levelname)s - %(module)s - %(message)s')
 
 # обработчик для логирования в файл
+path_dir = dirname(abspath(__file__))
+path_file = f'{path_dir}/server.log'
 file_hand = handlers.TimedRotatingFileHandler(
-    path.abspath('server.log'), 'D', 1, encoding='utf-8')  # ротация логов каждый день
+    path_file, 'D', 1, encoding='utf-8')  # ротация логов каждый день
 file_hand.setLevel(DEBUG)
 file_hand.setFormatter(format_message)
 
@@ -19,7 +23,7 @@ logger.addHandler(file_hand)
 logger.setLevel(DEBUG)
 
 date = f"{strftime('%y')}-{strftime('%m')}-{strftime('%d')}"
-file_hand_one_day = FileHandler(path.abspath(f'server.log.{date}'))
+file_hand_one_day = FileHandler(f'{path_dir}/server.log.{date}')
 file_hand_one_day.setLevel(DEBUG)
 file_hand_one_day.setFormatter(format_message)
 logger.addHandler(file_hand_one_day)

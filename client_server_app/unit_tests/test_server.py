@@ -3,12 +3,12 @@ from common.utils import read_conf
 from unittest import TestCase, main
 from time import ctime
 from sys import argv
+from common.config_path_file import CONFIG_PATH
 
 
 class TestServer(TestCase):
     """Тестовый класс для тестирования функций сервера"""
-    config = read_conf('../common/config.yaml')
-    name_conf = '../common/config.yaml'
+    config = read_conf(CONFIG_PATH)
     test_dict_get_ok = {
         config['RESPONSE']: 200
     }
@@ -26,7 +26,7 @@ class TestServer(TestCase):
 
     def test_message_handler_ok(self):
         """Тестирует если пришёл не правильный словарь в сообщении"""
-        self.assertEqual(message_handler(self.test_dict_get_err, self.name_conf), self.test_dict_get_err)
+        self.assertEqual(message_handler(self.test_dict_get_err, CONFIG_PATH), self.test_dict_get_err)
 
     def test_get_address_ok(self):
         """Тестирует правильный ли адрес вернёт функция get_address()"""
@@ -35,7 +35,7 @@ class TestServer(TestCase):
         argv.append('server.py')
         argv.append('-a')
         argv.append(self.config['ADDR_DEF'])
-        self.assertEqual(get_address(self.name_conf), self.config['ADDR_DEF'])
+        self.assertEqual(get_address(CONFIG_PATH), self.config['ADDR_DEF'])
 
     def test_get_address_none_port(self):
         """Тестирует вернётся ли None если не указать порт в аргументах"""
@@ -43,7 +43,7 @@ class TestServer(TestCase):
         argv.append('/snap/pycharm-community/276/plugins/python-ce/helpers/pycharm/_jb_unittest_runner.py')
         argv.append('server.py')
         argv.append('-a')
-        self.assertIsNone(get_address(self.name_conf), None)
+        self.assertIsNone(get_address(CONFIG_PATH), None)
 
     def test_get_port_type(self):
         """Тестирует правильный ли тип данных вернёт функция get_port()"""
@@ -51,7 +51,7 @@ class TestServer(TestCase):
         argv.append('/snap/pycharm-community/276/plugins/python-ce/helpers/pycharm/_jb_unittest_runner.py')
         argv.append('-p')
         argv.append('7778')
-        self.assertIsInstance(get_port(self.name_conf), int)
+        self.assertIsInstance(get_port(CONFIG_PATH), int)
 
 
 if __name__ == '__main__':

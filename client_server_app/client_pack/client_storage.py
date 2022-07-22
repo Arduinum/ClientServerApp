@@ -1,15 +1,16 @@
+from sys import path as sys_path
+sys_path.append('../')
 from os.path import dirname, realpath
 from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime
 from sqlalchemy.orm import sessionmaker, declarative_base
 from datetime import datetime
 from common.utils import read_conf
+from common.config_path_file import CONFIG_CLIENT_DB_PATH
 
 
 class ClientStorage:
     """Класс для работы с базой данных клиента в декларативном стиле"""
     Base = declarative_base()
-    conf_name = './common/config_client_db.yaml'
-    conf = read_conf(conf_name)
 
     class FamousUsers(Base):
         """Класс известные для клиента пользователи"""
@@ -25,14 +26,14 @@ class ClientStorage:
         """Класс история сообщений"""
         __tablename__ = 'history_messages'
         id = Column(Integer, primary_key=True)
-        from_user = Column(String)  # от кого сообщение
-        for_user = Column(String)  # для кого сообщение
+        contact_login = Column(String)
+        type_message = Column(String)
         message = Column(Text)
         date = Column(DateTime)
 
-        def __init__(self, from_user, for_user, message):
-            self.from_user = from_user
-            self.for_user = for_user
+        def __init__(self, contact_login, type_message, message):
+            self.contact_login = contact_login
+            self.type_message = type_message
             self.message = message
             self.date = datetime.now()
             super().__init__()
@@ -47,11 +48,15 @@ class ClientStorage:
             self.contact_login = contact_login
             super().__init__()
 
-    def __init__(self, name=conf["DB_NAME_FILE"]):
+    def __init__(self, name=None):
         # установка соединения с бд и сбор конф информации
         # echo=True - ведение лога, poll_recycle=7200 - переустановка соединения с бд каждые 2 часа
+        self.conf = read_conf(CONFIG_CLIENT_DB_PATH)
         self.path = dirname(realpath(__file__))
-        self.engine = create_engine(f'sqlite:///{self.path}/{name}', echo=True, pool_recycle=7200)
+        if name is None:
+            name = self.conf["DB_NAME_FILE"]
+        self.engine = create_engine(f'sqlite:///{self.path}/{name}.db3', echo=True, pool_recycle=7200,
+                                    connect_args={'check_same_thread': False})
         self.Base.metadata.create_all(self.engine)  # создаём все таблицы
         session_fabric = sessionmaker(bind=self.engine)
         self.session = session_fabric()  # создаём сессию
@@ -114,13 +119,31 @@ class ClientStorage:
         except (Exception, ) as err:
             print(f'Ошибка - {err} при работе с данными таблицы!')
 
+    def get_user_contacts_id(self):
+        """Метод класса возвращает список контактов пользователя в виде id"""
+        return [user[0] for user in self.session.query(self.UserContacts.contact_login).all()]
+
     def get_user_contacts(self):
         """Метод класса возвращает список контактов пользователя"""
-        return [user[0] for user in self.session.query(self.UserContacts.contact_login).all()]
+        list_contact = list()
+        contact_login_id_list = [user_id[0] for user_id in self.session.query(
+            self.UserContacts.contact_login).all()]
+        for user_id in contact_login_id_list:
+            name_search = self.session.query(self.FamousUsers.login).filter_by(id=user_id)
+            for name in name_search:
+                list_contact.append(name[0])
+        return list_contact
 
     def get_users(self):
         """Метод класса возращает список известных пользователей"""
         return [user[0] for user in self.session.query(self.FamousUsers.login).all()]
+
+    def get_user_cont_id(self, contact_login):
+        """Метод класса возвращает id контакта пользователя"""
+        contact_login_id = [login[0] for login in self.session.query(
+            self.FamousUsers.id).filter_by(login=contact_login)][0]
+        return [user_id[0] for user_id in self.session.query(
+            self.UserContacts.contact_login).filter_by(contact_login=contact_login_id)][0]
 
     def checker_user(self, login):
         """Метод класса для проверки известный ли клиенту пользователь"""
@@ -131,19 +154,16 @@ class ClientStorage:
 
     def checker_contact(self, contact_login):
         """Метод класса проверяет есть ли контакт в контактах"""
-        if self.session.query(self.UserContacts).filter_by(contact_login=contact_login).count():
+        contact_login_id = self.session.query(self.FamousUsers.id).filter_by(login=contact_login)
+        if self.session.query(self.UserContacts).filter_by(contact_login=contact_login_id).count():
             return True
         else:
             return False
 
-    def get_history_messages(self, from_who=None, for_who=None):
+    def get_history_messages(self, contact):
         """Метод класса возращает историю сообщений"""
-        history = self.session.query(self.HistoryMessages)
-        if for_who:
-            history = history.filter_by(for_user=for_who)
-        if from_who:
-            history = history.filter_by(from_user=from_who)
-        return [(history_line.from_user, history_line.for_user, history_line.message, history_line.date)
+        history = self.session.query(self.HistoryMessages).filter_by(contact_login=contact)
+        return [(history_line.contact_login, history_line.type_message, history_line.message, history_line.date)
                 for history_line in history.all()]
 
 

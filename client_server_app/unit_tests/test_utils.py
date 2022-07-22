@@ -2,6 +2,7 @@ from unittest import TestCase, main
 from common.utils import read_conf, get_message, send_message
 from json import dumps
 from time import ctime
+from common.config_path_file import CONFIG_PATH
 
 
 class TestSocket:
@@ -10,7 +11,7 @@ class TestSocket:
         self.test_dict = test_dict
         self.encode_message = None
         self.get_message = None
-        self.config = read_conf('../common/config.yaml')
+        self.config = read_conf(CONFIG_PATH)
 
     def send(self, message):
         """Отправляет корректно закодированное сообщение"""
@@ -28,8 +29,7 @@ class TestUtils(TestCase):
     """Тестовый класс для тестирования функций: read_conf(), которая читает файл config.yaml.,
     send_message(), которая кодирует и отправляет сообщение, get_message(), которая получает и декодирует сообщение"""
 
-    conf_name = '../common/config.yaml'
-    config = read_conf('../common/config.yaml')
+    config = read_conf(CONFIG_PATH)
     test_dict_get_ok = {
         config['RESPONSE']: 200
     }
@@ -73,35 +73,35 @@ class TestUtils(TestCase):
     def test_send_message_true(self):
         """Тестирует корректность отправки сообщения"""
         test_socket = TestSocket(self.test_dict_send)
-        send_message(test_socket, self.test_dict_send, self.conf_name)
+        send_message(test_socket, self.test_dict_send, CONFIG_PATH)
         self.assertEqual(test_socket.encode_message, test_socket.get_message)
 
     def test_send_message_error(self):
         """Тестирует сообщение с неправильным типом данных"""
         test_socket = TestSocket(self.test_dict_send)
-        send_message(test_socket, self.test_dict_send, self.conf_name)
+        send_message(test_socket, self.test_dict_send, CONFIG_PATH)
         self.assertRaises(TypeError, test_socket.test_dict, test_socket.get_message, 'error_dictionary!')
 
     def test_send_message_bytes(self):
         """Проверяет имеет ли сообщение тип данных bytes"""
         test_socket = TestSocket(self.test_dict_send)
-        send_message(test_socket, self.test_dict_send, self.conf_name)
+        send_message(test_socket, self.test_dict_send, CONFIG_PATH)
         self.assertIsInstance(test_socket.encode_message, bytes)
 
     def test_get_message_ok(self):
         """Тест приёма сообщения (словаря) на корректность содержимого"""
         test_sock_ok = TestSocket(self.test_dict_get_ok)
-        self.assertEqual(get_message(test_sock_ok, self.conf_name), self.test_dict_get_ok)
+        self.assertEqual(get_message(test_sock_ok, CONFIG_PATH), self.test_dict_get_ok)
 
     def test_get_message_error(self):
         """Тест приёма сообщения c неправильным словарём"""
         test_sock_err = TestSocket(self.test_dict_get_err)
-        self.assertEqual(get_message(test_sock_err, self.conf_name), self.test_dict_get_err)
+        self.assertEqual(get_message(test_sock_err, CONFIG_PATH), self.test_dict_get_err)
 
     def test_get_message_key_resp(self):
         """Проверка на содержание части строки в названии ключа словаря из сообщения"""
         test_sock_ok = TestSocket(self.test_dict_get_ok)
-        message = get_message(test_sock_ok, self.conf_name)
+        message = get_message(test_sock_ok, CONFIG_PATH)
         key_name = None
         for key in message.keys():
             if 'resp' in key:

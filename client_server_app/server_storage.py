@@ -3,6 +3,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime
 from common.utils import read_conf
 from os.path import dirname, realpath
+from common.config_path_file import CONFIG_SERVER_DB_PATH
 
 
 class ServerStorage:
@@ -82,9 +83,9 @@ class ServerStorage:
     def __init__(self, path):
         # установка соединения с бд и сбор конф информации
         # echo=True - ведение лога, poll_recycle=7200 - переустановка соединения с бд каждые 2 часа
-        self.conf_name = './common/config_server_db.yaml'
-        self.conf = read_conf(self.conf_name)
-        self.engine = create_engine(f'sqlite:///{path}/{self.conf["DB_NAME_FILE"]}?check_same_thread=False', echo=True, pool_recycle=7200)
+        self.conf = read_conf(CONFIG_SERVER_DB_PATH)
+        self.engine = create_engine(f'sqlite:///{path}/{self.conf["DB_NAME_FILE"]}?check_same_thread=False', echo=True,
+                                    pool_recycle=7200)
         self.Base.metadata.create_all(self.engine)  # создаём все таблицы
         session_fabric = sessionmaker(bind=self.engine)
         self.session = session_fabric()  # создаём сессию
