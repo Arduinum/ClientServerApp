@@ -1,9 +1,9 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, Text
 from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime
 from common.utils import read_conf
 from os.path import dirname, realpath
-from common.config_path_file import CONFIG_SERVER_DB_PATH
+from common.config_path_file import CONFIG_PATH
 
 
 class ServerStorage:
@@ -15,10 +15,14 @@ class ServerStorage:
         __tablename__ = 'all_users'
         id = Column(Integer, primary_key=True)
         login = Column(String, unique=True)
+        hash_passwd = Column(String)
+        publickey = Column(Text)
         last_entry_time = Column(DateTime)
 
-        def __init__(self, login):
+        def __init__(self, login, hash_passwd):
             self.login = login
+            self.hash_passwd = hash_passwd
+            self.publickey = None
             self.last_entry_time = datetime.now()
             super().__init__()
 
@@ -80,32 +84,32 @@ class ServerStorage:
             self.accepted = 0  # полученных сообщений
             super().__init__()
 
-    def __init__(self, path):
+    def __init__(self, path=None, name_db=None):
         # установка соединения с бд и сбор конф информации
         # echo=True - ведение лога, poll_recycle=7200 - переустановка соединения с бд каждые 2 часа
-        self.conf = read_conf(CONFIG_SERVER_DB_PATH)
-        self.engine = create_engine(f'sqlite:///{path}/{self.conf["DB_NAME_FILE"]}?check_same_thread=False', echo=True,
-                                    pool_recycle=7200)
+        self.conf = read_conf(CONFIG_PATH)
+        if not name_db:
+            name_db = self.conf['DB_NAME_FILE']
+        if not path:
+            path = self.conf['DB_PATH']
+        self.engine = create_engine(f'sqlite:///{path}/{name_db}?check_same_thread=False', echo=True, pool_recycle=7200)
         self.Base.metadata.create_all(self.engine)  # создаём все таблицы
         session_fabric = sessionmaker(bind=self.engine)
         self.session = session_fabric()  # создаём сессию
 
-    def user_login(self, login, ip_address, port):
+    def user_login(self, login, ip_address, port, pub_key):
         """Метод класса для фиксации входа пользователя"""
         try:
             user_search = self.session.query(self.AllUsers).filter_by(login=login)  # ищим логин
+            user = None
             # если находим, то обновляем время входа
             if user_search.count():
                 user = user_search.first()
                 user.last_entry_time = datetime.now()
-                self.session.commit()
-            # если не находим создаём новго пользователя
-            else:
-                user = self.AllUsers(login)
-                self.session.add(user)
-                self.session.commit()
-                user_in_history = self.UsersHistory(user.id)
-                self.session.add(user_in_history)
+                if user.publickey != pub_key:
+                    user.publickey = pub_key
+            elif not user_search.count():
+                raise ValueError('Пользователь не был зарегистрирован!')
 
             user_active = self.ActiveUsers(user.id, datetime.now(), ip_address, port)
             self.session.add(user_active)
@@ -113,7 +117,7 @@ class ServerStorage:
             history_logins = self.HistoryLogins(user.id, datetime.now(), ip_address, port)
             self.session.add(history_logins)
             self.session.commit()
-        except (Exception, ) as err:
+        except Exception as err:
             print(f'Ошибка - {err} при работе с данными таблицы!')
 
     def user_logout(self, login):
@@ -179,10 +183,10 @@ class ServerStorage:
         except (Exception, ) as err:
             print(f'Ошибка - {err} при работе с данными таблицы!')
 
-    def add_contact(self, user, contact_user):
+    def add_contact(self, login, contact_user):
         """Метод класса для добавления контакта из бд"""
         try:
-            user = self.session.query(self.AllUsers).filter_by(login=user).first()
+            user = self.session.query(self.AllUsers).filter_by(login=login).first()
             contact_user = self.session.query(self.AllUsers).filter_by(login=contact_user).first()
 
             if not contact_user:
@@ -197,10 +201,10 @@ class ServerStorage:
         except (Exception, ) as err:
             print(f'Ошибка - {err} при работе с данными таблицы!')
 
-    def delete_contact(self, user, contact_user):
+    def delete_contact(self, login, contact_user):
         """Метод класса для удаления контакта из бд"""
         try:
-            user = self.session.query(self.AllUsers).filter_by(login=user).first()
+            user = self.session.query(self.AllUsers).filter_by(login=login).first()
             contact_user = self.session.query(self.AllUsers).filter_by(login=contact_user).first()
 
             if not contact_user:
@@ -213,6 +217,17 @@ class ServerStorage:
             self.session.commit()
         except (Exception, ) as err:
             print(f'Ошибка - {err} при работе с данными таблицы!')
+
+    def delete_user(self, login):
+        """Метод класса для удаления пользователя из бд"""
+        user = self.session.query(self.AllUsers).filter_by(login=login).first()
+        self.session.query(self.ActiveUsers).filter_by(login_id=user.id).delete()
+        self.session.query(self.HistoryLogins).filter_by(login_id=user.id).delete()
+        self.session.query(self.UsersContacts).filter_by(login_id=user.id).delete()
+        self.session.query(self.UsersContacts).filter_by(contact_login_id=user.id).delete()
+        self.session.query(self.UsersHistory).filter_by(login_id=user.id).delete()
+        self.session.query(self.AllUsers).filter_by(login=login).delete()
+        self.session.commit()
 
     def get_users_contacts(self, login):
         """Метод класса возвращающий список контактов пользователя"""
@@ -236,6 +251,32 @@ class ServerStorage:
             return message_count.all()
         except (Exception, ) as err:
             print(f'Ошибка - {err} при работе с данными таблицы!')
+
+    def checker_user(self, login):
+        """Метод класса проверяет существует ли пользователь"""
+        if self.session.query(self.AllUsers).filter_by(login=login).count():
+            return True
+        else:
+            return False
+
+    def register_user(self, login, hash_passwd):
+        """Метод класса для регистрации пользователя и создания в записи в таблице статистики"""
+        user_line = self.AllUsers(login, hash_passwd)
+        self.session.add(user_line)
+        self.session.commit()
+        history_line = self.UsersHistory(user_line.id)
+        self.session.add(history_line)
+        self.session.commit()
+
+    def get_pub_key(self, login):
+        """Метод класса для получения публичного ключа пользователя"""
+        user = self.session.query(self.AllUsers).filter_by(login=login).first()
+        return user.publickey
+
+    def get_hash(self, login):
+        """Метод класса для получения хэша пароля пользователя."""
+        user = self.session.query(self.AllUsers).filter_by(login=login).first()
+        return user.hash_passwd
 
 
 if __name__ == '__main__':

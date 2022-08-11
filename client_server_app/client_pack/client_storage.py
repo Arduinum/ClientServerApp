@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime
 from sqlalchemy.orm import sessionmaker, declarative_base
 from datetime import datetime
 from common.utils import read_conf
-from common.config_path_file import CONFIG_CLIENT_DB_PATH
+from common.config_path_file import CONFIG_CLIENT_PATH
 
 
 class ClientStorage:
@@ -48,14 +48,10 @@ class ClientStorage:
             self.contact_login = contact_login
             super().__init__()
 
-    def __init__(self, name=None):
+    def __init__(self, path, name):
         # установка соединения с бд и сбор конф информации
         # echo=True - ведение лога, poll_recycle=7200 - переустановка соединения с бд каждые 2 часа
-        self.conf = read_conf(CONFIG_CLIENT_DB_PATH)
-        self.path = dirname(realpath(__file__))
-        if name is None:
-            name = self.conf["DB_NAME_FILE"]
-        self.engine = create_engine(f'sqlite:///{self.path}/{name}.db3', echo=True, pool_recycle=7200,
+        self.engine = create_engine(f'sqlite:///{path}/{name}.db3', echo=True, pool_recycle=7200,
                                     connect_args={'check_same_thread': False})
         self.Base.metadata.create_all(self.engine)  # создаём все таблицы
         session_fabric = sessionmaker(bind=self.engine)
@@ -168,9 +164,10 @@ class ClientStorage:
 
 
 if __name__ == '__main__':
-    client_storage = ClientStorage('cl1')
+    dir_path = dirname(realpath(__file__))
+    client_storage = ClientStorage(dir_path, 'cl1')
     client_storage.table_clear('all')
-    client_storage = ClientStorage('cl2')
+    client_storage = ClientStorage(dir_path, 'cl2')
     client_storage.table_clear('all')
     # client_storage.add_contact('bot628')
     # client_storage.add_contact('botT1000')

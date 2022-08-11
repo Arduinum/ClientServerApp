@@ -22,20 +22,32 @@ class Launcher:
     def main(self):
         """Метод класса для удобного запуска сервера и клиентов"""
         while True:
-            command = input('Команды: exit - выйти, start - запуск сервера и клиентов, close - закрыть все окна: ')
+            command = input('Команды: exit - выйти, '
+                            'server - запуск сервера, '
+                            'client - запуск клиента/клиентов, '
+                            'close - закрыть все окна: ')
 
             if command == 'exit':
                 break
-            elif command == 'start':
+            elif command == 'server':
                 self.process.append(self.get_subproc('server.py'))
-
-                for i in range(2):
-                    self.process.append(self.get_subproc('client.py'))
-
+            elif command == 'client':
+                count_client = None
+                while True:
+                    try:
+                        count_client = int(input('Введите колличество клиентов: '))
+                    except ValueError as err:
+                        print(f'{err}.\nКолличество клиентов может быть только числом!')
+                    else:
+                        for i in range(count_client):
+                            self.process.append(self.get_subproc('client.py'))
+                        break
             elif command == 'close':
                 while len(self.process) > 0:
                     kill_proc = self.process.pop()
                     killpg(kill_proc.pid, signal.SIGINT)  # убиваем все процессы
+            else:
+                print(f'Команда - {command} не существует!')
 
 
 # launcher = Launcher()
