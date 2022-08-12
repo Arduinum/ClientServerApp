@@ -1,0 +1,11 @@
+{
+    "orders": [
+        {
+            "buyer": "Антон Фадеев",
+            "date": "01.05.2022",
+            "item": "Arduino Mega 2560 R3",
+            "price": 15510,
+            "quantity": 2
+        }
+    ]
+}
