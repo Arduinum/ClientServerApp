@@ -51,16 +51,12 @@ def check_gui_argv():
 
 def check_addr_argv():
     """Функция для проверки аргумента адреса на предмет наличия"""
-    str_re = r'\d.\d.\d.\d'
     try:
         if '-a' in argv:
             return argv[argv.index('-a') + 1]
         elif '--addr' in argv:
-            return argv[argv.index('--addr') + 1]
+            return argv[argv.index('-addr') + 1]
         else:
-            for addr in argv:
-                if search(str_re, addr):
-                    return addr
             return conf['ADDR_DEF']
     except IndexError:
         return conf['ADDR_DEF']
@@ -75,12 +71,7 @@ def check_name_argv():
         elif '--name' in argv:
             return argv[argv.index('--name') + 1]
         else:
-            if '-a' in argv or '--addr' in argv:
-                return int(argv[3 + 1])
-            elif '-a' in argv or '--addr' in argv and '-p' in argv or '--port' in argv:
-                return int(argv[3 + 2])
-            else:
-                return argv[3]
+            return None
     except IndexError:
         return None
 
@@ -89,18 +80,10 @@ def check_port_argv():
     """Функция для проверки аргумента порта на предмет наличия """
     logger.debug('Проверка аргумента порта')
     try:
-        if '-p' in argv:
-            return argv[argv.index('-p') + 1]
-        elif '--port' in argv:
+        if '--port' in argv:
             return argv[argv.index('--port') + 1]
         else:
-            if '-a' in argv or '--addr' in argv:
-                return int(argv[2 + 1])
-            else:
-                for port in argv:
-                    if port.isdigit():
-                        return int(port)
-                return conf['PORT_DEF']
+            return conf['PORT_DEF']
     except IndexError:
         return conf['PORT_DEF']
 
@@ -113,6 +96,8 @@ def check_passwd_argv():
             return argv[argv.index('--password') + 1]
         elif '--passwd' in argv:
             return argv[argv.index('--passwd') + 1]
+        elif '-p' in argv:
+            return argv[argv.index('-p') + 1]
         else:
             return None
     except IndexError:

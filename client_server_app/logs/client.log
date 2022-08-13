@@ -1824,3 +1824,186 @@
 2022-08-10 20:04:42,487 - DEBUG - transport - Транспорт выключается.
 2022-08-10 20:04:43,071 - DEBUG - decorators - Wed Aug 10 20:04:43 2022 - функция run вызвана из функции _bootstrap_inner из модуля client_pack.transport
 2022-08-10 20:04:43,088 - DEBUG - decorators - Wed Aug 10 20:04:43 2022 - функция transport_close вызвана из функции main из модуля client_pack.transport
+2022-08-13 16:57:44,691 - DEBUG - client - Получение корректных данных для соединения с сервером
+2022-08-13 16:57:44,752 - DEBUG - client - Получение корректных данных для соединения с сервером
+2022-08-13 16:57:44,767 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 16:57:44,767 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 16:57:44,767 - DEBUG - utils - Проверка аргумента имени
+2022-08-13 16:57:44,767 - DEBUG - utils - Проверка аргумента имени
+2022-08-13 16:57:44,767 - DEBUG - utils - Проверка аргумента пароля
+2022-08-13 16:57:44,767 - DEBUG - utils - Проверка аргумента пароля
+2022-08-13 17:04:44,521 - DEBUG - client - Получение корректных данных для соединения с сервером
+2022-08-13 17:04:44,522 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 17:04:44,522 - DEBUG - utils - Проверка аргумента имени
+2022-08-13 17:04:44,522 - DEBUG - utils - Проверка аргумента пароля
+2022-08-13 17:05:13,637 - DEBUG - client - Получение корректных данных для соединения с сервером
+2022-08-13 17:05:13,638 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 17:05:13,638 - DEBUG - utils - Проверка аргумента имени
+2022-08-13 17:05:13,638 - DEBUG - utils - Проверка аргумента пароля
+2022-08-13 17:08:40,869 - DEBUG - client - Получение корректных данных для соединения с сервером
+2022-08-13 17:08:40,869 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 17:08:40,869 - DEBUG - utils - Проверка аргумента имени
+2022-08-13 17:08:40,870 - DEBUG - utils - Проверка аргумента пароля
+2022-08-13 17:10:03,131 - DEBUG - client - Получение корректных данных для соединения с сервером
+2022-08-13 17:10:03,132 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 17:10:03,132 - DEBUG - utils - Проверка аргумента имени
+2022-08-13 17:10:03,132 - DEBUG - utils - Проверка аргумента пароля
+2022-08-13 17:10:03,212 - INFO - client - Старт работы клиента с параметрами: адрес сервера - 127.0.0.1, порт: 228, имя пользователя cl1.
+2022-08-13 17:10:03,461 - DEBUG - client - Ключи успешно прочитаны.
+2022-08-13 17:10:03,523 - INFO - transport - Номер попытки подключения - 1
+2022-08-13 17:10:04,724 - INFO - transport - Номер попытки подключения - 2
+2022-08-13 17:10:05,925 - INFO - transport - Номер попытки подключения - 3
+2022-08-13 17:10:07,127 - INFO - transport - Номер попытки подключения - 4
+2022-08-13 17:10:08,329 - INFO - transport - Номер попытки подключения - 5
+2022-08-13 17:10:09,530 - INFO - transport - Номер попытки подключения - 6
+2022-08-13 17:10:10,732 - CRITICAL - transport - Подключение к серверу 127.0.0.1:228 не удалось!
+2022-08-13 17:11:33,778 - DEBUG - client - Получение корректных данных для соединения с сервером
+2022-08-13 17:11:33,778 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 17:11:33,778 - DEBUG - utils - Проверка аргумента имени
+2022-08-13 17:11:33,778 - DEBUG - utils - Проверка аргумента пароля
+2022-08-13 17:11:33,852 - INFO - client - Старт работы клиента с параметрами: адрес сервера - 127.0.0.1, порт: 228, имя пользователя cl1.
+2022-08-13 17:11:33,887 - DEBUG - client - Ключи успешно прочитаны.
+2022-08-13 17:11:33,958 - INFO - transport - Номер попытки подключения - 1
+2022-08-13 17:11:35,159 - INFO - transport - Номер попытки подключения - 2
+2022-08-13 17:11:36,360 - INFO - transport - Номер попытки подключения - 3
+2022-08-13 17:11:37,564 - INFO - transport - Номер попытки подключения - 4
+2022-08-13 17:11:38,766 - INFO - transport - Номер попытки подключения - 5
+2022-08-13 17:11:39,968 - INFO - transport - Номер попытки подключения - 6
+2022-08-13 17:11:41,169 - CRITICAL - transport - Подключение к серверу 127.0.0.1:228 не удалось!
+2022-08-13 17:26:10,412 - DEBUG - client - Получение корректных данных для соединения с сервером
+2022-08-13 17:26:10,412 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 17:26:10,412 - DEBUG - utils - Проверка аргумента имени
+2022-08-13 17:26:10,412 - DEBUG - utils - Проверка аргумента пароля
+2022-08-13 17:26:10,524 - INFO - client - Старт работы клиента с параметрами: адрес сервера - 127.0.0.1, порт: 7777, имя пользователя cl1.
+2022-08-13 17:26:10,568 - DEBUG - client - Ключи успешно прочитаны.
+2022-08-13 17:26:10,603 - INFO - transport - Номер попытки подключения - 1
+2022-08-13 17:26:10,604 - DEBUG - transport - Установлено соединение с сервером 127.0.0.1:7777
+2022-08-13 17:26:10,604 - DEBUG - transport - Старт диалога аутентификации.
+2022-08-13 17:26:10,625 - DEBUG - transport - Хеш пароля готов: b'2ff918a051385cdbbe8d6585858e667e7cd43ad9eb65221b7b35f21b15e25467bd962aaf3745ee59ad6d841df181f2274a7363685bf3fe14b4217b6a011e9127'
+2022-08-13 17:26:10,758 - DEBUG - decorators - Sat Aug 13 17:26:10 2022 - функция create_welcome_message вызвана из функции connect_init из модуля client_pack.transport
+2022-08-13 17:26:10,758 - DEBUG - transport - Приветственное сообщение - {'action': 'presence', 'time': 'Sat Aug 13 17:26:10 2022', 'user': {'account_name': 'cl1', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA32zLSe1be+fXJG9YSZtH\nr7iW8802IkVKmUzqpSDkLcg0jMM69GFpAr51+LKziWLQvpauWdkxzX/RrwWTOq3X\ngYJ4Rqzu4BpzTzFRm15jykIjyeTl9egHRNX6Mp6/W7ZI2zHa9trCwpTj5A9ll9Im\nuQ9/umhYzhYtsjrne9eDaK5MIImiChSujT3/fGCTL5uZy99YeSgNQs78u8G49O1B\n9IX8XQqjdasUJM6muc8PTZakIXgp7xlCpkS5ZcBD54YLkz8jUb7GEzoNF0o0gLg0\nqT77KuUIQl2kcuTBCinMnQmrZAyA1q48EtermXjxLVIg3jOTTsGC+d6d9J+qIjwu\nKwIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 17:26:11,241 - DEBUG - transport - Ответ сервера - {'response': 400, 'error': 'Пользователь не был зарегистрирован!'}.
+2022-08-13 17:26:41,740 - DEBUG - client - Получение корректных данных для соединения с сервером
+2022-08-13 17:26:41,741 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 17:26:41,741 - DEBUG - utils - Проверка аргумента имени
+2022-08-13 17:26:41,741 - DEBUG - utils - Проверка аргумента пароля
+2022-08-13 17:26:57,284 - DEBUG - client - Используется логин - cl1, пароль - 228.
+2022-08-13 17:26:57,284 - INFO - client - Старт работы клиента с параметрами: адрес сервера - 127.0.0.1, порт: 7777, имя пользователя cl1.
+2022-08-13 17:26:57,327 - DEBUG - client - Ключи успешно прочитаны.
+2022-08-13 17:26:57,408 - INFO - transport - Номер попытки подключения - 1
+2022-08-13 17:26:57,408 - DEBUG - transport - Установлено соединение с сервером 127.0.0.1:7777
+2022-08-13 17:26:57,408 - DEBUG - transport - Старт диалога аутентификации.
+2022-08-13 17:26:57,416 - DEBUG - transport - Хеш пароля готов: b'2ff918a051385cdbbe8d6585858e667e7cd43ad9eb65221b7b35f21b15e25467bd962aaf3745ee59ad6d841df181f2274a7363685bf3fe14b4217b6a011e9127'
+2022-08-13 17:26:57,439 - DEBUG - decorators - Sat Aug 13 17:26:57 2022 - функция create_welcome_message вызвана из функции connect_init из модуля client_pack.transport
+2022-08-13 17:26:57,439 - DEBUG - transport - Приветственное сообщение - {'action': 'presence', 'time': 'Sat Aug 13 17:26:57 2022', 'user': {'account_name': 'cl1', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA32zLSe1be+fXJG9YSZtH\nr7iW8802IkVKmUzqpSDkLcg0jMM69GFpAr51+LKziWLQvpauWdkxzX/RrwWTOq3X\ngYJ4Rqzu4BpzTzFRm15jykIjyeTl9egHRNX6Mp6/W7ZI2zHa9trCwpTj5A9ll9Im\nuQ9/umhYzhYtsjrne9eDaK5MIImiChSujT3/fGCTL5uZy99YeSgNQs78u8G49O1B\n9IX8XQqjdasUJM6muc8PTZakIXgp7xlCpkS5ZcBD54YLkz8jUb7GEzoNF0o0gLg0\nqT77KuUIQl2kcuTBCinMnQmrZAyA1q48EtermXjxLVIg3jOTTsGC+d6d9J+qIjwu\nKwIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 17:26:58,011 - DEBUG - transport - Ответ сервера - {'response': 400, 'error': 'Пользователь не был зарегистрирован!'}.
+2022-08-13 17:27:58,342 - DEBUG - client - Получение корректных данных для соединения с сервером
+2022-08-13 17:27:58,350 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 17:27:58,350 - DEBUG - utils - Проверка аргумента имени
+2022-08-13 17:27:58,350 - DEBUG - utils - Проверка аргумента пароля
+2022-08-13 17:27:58,811 - INFO - client - Старт работы клиента с параметрами: адрес сервера - 127.0.0.1, порт: 7777, имя пользователя cl1.
+2022-08-13 17:27:58,865 - DEBUG - client - Ключи успешно прочитаны.
+2022-08-13 17:27:58,939 - INFO - transport - Номер попытки подключения - 1
+2022-08-13 17:27:58,940 - DEBUG - transport - Установлено соединение с сервером 127.0.0.1:7777
+2022-08-13 17:27:58,940 - DEBUG - transport - Старт диалога аутентификации.
+2022-08-13 17:27:58,947 - DEBUG - transport - Хеш пароля готов: b'2ff918a051385cdbbe8d6585858e667e7cd43ad9eb65221b7b35f21b15e25467bd962aaf3745ee59ad6d841df181f2274a7363685bf3fe14b4217b6a011e9127'
+2022-08-13 17:27:58,965 - DEBUG - decorators - Sat Aug 13 17:27:58 2022 - функция create_welcome_message вызвана из функции connect_init из модуля client_pack.transport
+2022-08-13 17:27:58,965 - DEBUG - transport - Приветственное сообщение - {'action': 'presence', 'time': 'Sat Aug 13 17:27:58 2022', 'user': {'account_name': 'cl1', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA32zLSe1be+fXJG9YSZtH\nr7iW8802IkVKmUzqpSDkLcg0jMM69GFpAr51+LKziWLQvpauWdkxzX/RrwWTOq3X\ngYJ4Rqzu4BpzTzFRm15jykIjyeTl9egHRNX6Mp6/W7ZI2zHa9trCwpTj5A9ll9Im\nuQ9/umhYzhYtsjrne9eDaK5MIImiChSujT3/fGCTL5uZy99YeSgNQs78u8G49O1B\n9IX8XQqjdasUJM6muc8PTZakIXgp7xlCpkS5ZcBD54YLkz8jUb7GEzoNF0o0gLg0\nqT77KuUIQl2kcuTBCinMnQmrZAyA1q48EtermXjxLVIg3jOTTsGC+d6d9J+qIjwu\nKwIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 17:27:59,549 - DEBUG - transport - Ответ сервера - {'response': 511, 'bin': 'f11d2823b23c7b8fd433da92442d18cdf3b34536bd9f1cfe7817dacbeec9c0cf0b901594b92398f23433959915d20f96484c54822f0aa77d4494e401e2b44289'}.
+2022-08-13 17:27:59,550 - DEBUG - transport - Выполняется разбор ответа сервера - {'response': 200}
+2022-08-13 17:27:59,550 - INFO - transport - Получен ответ от сервера - 200 : OK
+2022-08-13 17:27:59,550 - DEBUG - decorators - Sat Aug 13 17:27:59 2022 - функция response_analysis вызвана из функции connect_init из модуля client_pack.transport
+2022-08-13 17:27:59,550 - DEBUG - decorators - Sat Aug 13 17:27:59 2022 - функция connect_init вызвана из функции __init__ из модуля client_pack.transport
+2022-08-13 17:27:59,550 - DEBUG - transport - Запрос списка известных пользователей cl1
+2022-08-13 17:28:00,206 - DEBUG - decorators - Sat Aug 13 17:28:00 2022 - функция user_list_request вызвана из функции __init__ из модуля client_pack.transport
+2022-08-13 17:28:00,207 - DEBUG - transport - Запрос контакт листа для пользователя cl1
+2022-08-13 17:28:00,207 - DEBUG - transport - Сформирован запрос {'action': 'get_contacts', 'time': 'Sat Aug 13 17:28:00 2022', 'user': 'cl1'}
+2022-08-13 17:28:00,796 - DEBUG - transport - Получен ответ {'response': 202, 'data_list': []}
+2022-08-13 17:28:00,797 - DEBUG - decorators - Sat Aug 13 17:28:00 2022 - функция contacts_list_request вызвана из функции __init__ из модуля client_pack.transport
+2022-08-13 17:28:00,797 - DEBUG - transport - Приёмник сообщений с сервера запущен.
+2022-08-13 17:28:05,826 - DEBUG - decorators - Sat Aug 13 17:28:05 2022 - функция create_out_message вызвана из функции transport_close из модуля client_pack.transport
+2022-08-13 17:28:06,202 - DEBUG - transport - Транспорт выключается.
+2022-08-13 17:28:06,221 - DEBUG - decorators - Sat Aug 13 17:28:06 2022 - функция run вызвана из функции _bootstrap_inner из модуля client_pack.transport
+2022-08-13 17:28:06,803 - DEBUG - decorators - Sat Aug 13 17:28:06 2022 - функция transport_close вызвана из функции main из модуля client_pack.transport
+2022-08-13 17:29:39,242 - DEBUG - client - Получение корректных данных для соединения с сервером
+2022-08-13 17:29:39,242 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 17:29:39,242 - DEBUG - utils - Проверка аргумента имени
+2022-08-13 17:29:39,242 - DEBUG - utils - Проверка аргумента пароля
+2022-08-13 17:29:39,386 - INFO - client - Старт работы клиента с параметрами: адрес сервера - 127.0.0.1, порт: 7777, имя пользователя test_cl1.
+2022-08-13 17:29:39,682 - DEBUG - client - Ключи успешно прочитаны.
+2022-08-13 17:29:39,815 - INFO - transport - Номер попытки подключения - 1
+2022-08-13 17:29:39,979 - DEBUG - client - Получение корректных данных для соединения с сервером
+2022-08-13 17:29:39,979 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 17:29:39,980 - DEBUG - utils - Проверка аргумента имени
+2022-08-13 17:29:39,980 - DEBUG - utils - Проверка аргумента пароля
+2022-08-13 17:29:40,406 - INFO - client - Старт работы клиента с параметрами: адрес сервера - 127.0.0.1, порт: 7777, имя пользователя test_cl2.
+2022-08-13 17:29:40,718 - DEBUG - client - Ключи успешно прочитаны.
+2022-08-13 17:29:40,798 - INFO - transport - Номер попытки подключения - 1
+2022-08-13 17:29:41,018 - INFO - transport - Номер попытки подключения - 2
+2022-08-13 17:29:41,999 - INFO - transport - Номер попытки подключения - 2
+2022-08-13 17:29:42,219 - INFO - transport - Номер попытки подключения - 3
+2022-08-13 17:29:43,199 - INFO - transport - Номер попытки подключения - 3
+2022-08-13 17:29:43,420 - INFO - transport - Номер попытки подключения - 4
+2022-08-13 17:29:44,400 - INFO - transport - Номер попытки подключения - 4
+2022-08-13 17:29:44,623 - INFO - transport - Номер попытки подключения - 5
+2022-08-13 17:29:45,602 - INFO - transport - Номер попытки подключения - 5
+2022-08-13 17:29:45,824 - INFO - transport - Номер попытки подключения - 6
+2022-08-13 17:29:46,803 - INFO - transport - Номер попытки подключения - 6
+2022-08-13 17:29:47,025 - CRITICAL - transport - Подключение к серверу 127.0.0.1:7777 не удалось!
+2022-08-13 17:29:48,004 - CRITICAL - transport - Подключение к серверу 127.0.0.1:7777 не удалось!
+2022-08-13 18:23:51,056 - DEBUG - client - Получение корректных данных для соединения с сервером
+2022-08-13 18:23:51,059 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 18:23:51,059 - DEBUG - utils - Проверка аргумента имени
+2022-08-13 18:23:51,059 - DEBUG - utils - Проверка аргумента пароля
+2022-08-13 18:23:51,229 - INFO - client - Старт работы клиента с параметрами: адрес сервера - 127.0.0.1, порт: 7777, имя пользователя test_cl1.
+2022-08-13 18:23:51,307 - DEBUG - client - Ключи успешно прочитаны.
+2022-08-13 18:23:51,391 - INFO - transport - Номер попытки подключения - 1
+2022-08-13 18:23:51,391 - DEBUG - transport - Установлено соединение с сервером 127.0.0.1:7777
+2022-08-13 18:23:51,391 - DEBUG - transport - Старт диалога аутентификации.
+2022-08-13 18:23:51,399 - DEBUG - transport - Хеш пароля готов: b'9d820b59c658f8a0c85f856d177dd293f6c663bc66b3a8940f79d06f0edae3fdca1c853ed346529b7e891d7a3b1918e5dce7652aa232b6d561d2c76411c19b25'
+2022-08-13 18:23:51,437 - DEBUG - decorators - Sat Aug 13 18:23:51 2022 - функция create_welcome_message вызвана из функции connect_init из модуля client_pack.transport
+2022-08-13 18:23:51,437 - DEBUG - transport - Приветственное сообщение - {'action': 'presence', 'time': 'Sat Aug 13 18:23:51 2022', 'user': {'account_name': 'test_cl1', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2c3mIuZPqPsNHqvDmLW+\nHe9TXyBOilhnFTNGJEyw6jujZKyv8OTF6Np4lZjsSTutATCCaSokHKP0Gy5sGh8p\n0M9IT7kd6T3jyPu+kZ+BKqwhocsq0yZbJZqdmy6hioqTQ4d0n/L45lRevrIyAbx3\n80GScfU7do5JNgBcvzj4641/rv553zlJ+0hD6coPKLhlrZkPsj/QBg3uNKWiJ47g\nyUOmJ64BMoZsR5GvKZ68tPZSgSH7WjAiQoolIgB3zXbvld3FEIOjQGBRFWy3Sgo4\n1BPTBkE697A6h7xgRghNFIObCC/eOne3riU5x49lFNsK3brdgM08Tz/Bd341oxHl\n3wIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 18:23:51,459 - DEBUG - client - Получение корректных данных для соединения с сервером
+2022-08-13 18:23:51,460 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 18:23:51,460 - DEBUG - utils - Проверка аргумента имени
+2022-08-13 18:23:51,460 - DEBUG - utils - Проверка аргумента пароля
+2022-08-13 18:23:51,626 - INFO - client - Старт работы клиента с параметрами: адрес сервера - 127.0.0.1, порт: 7777, имя пользователя test_cl2.
+2022-08-13 18:23:51,699 - DEBUG - client - Ключи успешно прочитаны.
+2022-08-13 18:23:51,749 - INFO - transport - Номер попытки подключения - 1
+2022-08-13 18:23:51,749 - DEBUG - transport - Установлено соединение с сервером 127.0.0.1:7777
+2022-08-13 18:23:51,749 - DEBUG - transport - Старт диалога аутентификации.
+2022-08-13 18:23:51,757 - DEBUG - transport - Хеш пароля готов: b'473faffd5e5c0ecb410b6ce808ac5e24f58e29b18352aece505171b0db827d929bca036c5273c718cd18e64346c06b4a734861c64dbe1dd125f2589a053d9cfa'
+2022-08-13 18:23:51,769 - DEBUG - transport - Ответ сервера - {'response': 511, 'bin': '442f4ae77a8161c5f8e60280d330b9d39f26615123ed13393a1d1afaa1b968a8ebd20432e8b83f8406a2b63d54864d4c8539e0e7c79b5c2d8bb16b0fe492a6ac'}.
+2022-08-13 18:23:51,770 - DEBUG - transport - Выполняется разбор ответа сервера - {'response': 200}
+2022-08-13 18:23:51,770 - INFO - transport - Получен ответ от сервера - 200 : OK
+2022-08-13 18:23:51,770 - DEBUG - decorators - Sat Aug 13 18:23:51 2022 - функция response_analysis вызвана из функции connect_init из модуля client_pack.transport
+2022-08-13 18:23:51,770 - DEBUG - decorators - Sat Aug 13 18:23:51 2022 - функция connect_init вызвана из функции __init__ из модуля client_pack.transport
+2022-08-13 18:23:51,770 - DEBUG - transport - Запрос списка известных пользователей test_cl1
+2022-08-13 18:23:51,783 - DEBUG - decorators - Sat Aug 13 18:23:51 2022 - функция create_welcome_message вызвана из функции connect_init из модуля client_pack.transport
+2022-08-13 18:23:51,784 - DEBUG - transport - Приветственное сообщение - {'action': 'presence', 'time': 'Sat Aug 13 18:23:51 2022', 'user': {'account_name': 'test_cl2', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3lu1xH9U0OZRoaZLccdL\nBlqSZFRb//qC+icE7MXosNaKXad3dnw5Ml3XyA+2l+zz0SzVeWKhCkg0gvIgBRps\ncEs4x5sz+MIHIJimu86KCTwNU6vWD0ppl65oqOG5W1Nrdj6Iol0oaHIsveaRK5nS\nDqOoPrCE1OSJwhUU0Zjic9aiuxlXvYxUerePwKIMCfd9HIJzC8NKfST/OgsEN7Zt\nbaNVLRd/quAJ15v/WACEl18CeZiOF2tw9zaWXu82kjKiwspkbm2wPlftvoKeiuzV\nat81iJvCvbcC87VPpm/6Up6ay7GUwchMmtb1O/c4YPQHYSy5j5uKJ4PrOvbjA4gX\n0wIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 18:23:52,443 - DEBUG - transport - Ответ сервера - {'response': 511, 'bin': '9b9c987818bc5a5a238fb4ad306730d44904900fc88940bec12a3fb0d5f34d5516f677013950b0682d7b8ded79daf594849318f25297e308515672a42e4bca5e'}.
+2022-08-13 18:23:52,443 - DEBUG - transport - Выполняется разбор ответа сервера - {'response': 200}
+2022-08-13 18:23:52,443 - INFO - transport - Получен ответ от сервера - 200 : OK
+2022-08-13 18:23:52,444 - DEBUG - decorators - Sat Aug 13 18:23:52 2022 - функция response_analysis вызвана из функции connect_init из модуля client_pack.transport
+2022-08-13 18:23:52,444 - DEBUG - decorators - Sat Aug 13 18:23:52 2022 - функция connect_init вызвана из функции __init__ из модуля client_pack.transport
+2022-08-13 18:23:52,444 - DEBUG - transport - Запрос списка известных пользователей test_cl2
+2022-08-13 18:23:52,514 - DEBUG - decorators - Sat Aug 13 18:23:52 2022 - функция user_list_request вызвана из функции __init__ из модуля client_pack.transport
+2022-08-13 18:23:52,514 - DEBUG - transport - Запрос контакт листа для пользователя test_cl1
+2022-08-13 18:23:52,514 - DEBUG - transport - Сформирован запрос {'action': 'get_contacts', 'time': 'Sat Aug 13 18:23:52 2022', 'user': 'test_cl1'}
+2022-08-13 18:23:53,111 - DEBUG - transport - Получен ответ {'response': 202, 'data_list': []}
+2022-08-13 18:23:53,112 - DEBUG - decorators - Sat Aug 13 18:23:53 2022 - функция contacts_list_request вызвана из функции __init__ из модуля client_pack.transport
+2022-08-13 18:23:53,112 - DEBUG - transport - Приёмник сообщений с сервера запущен.
+2022-08-13 18:23:53,160 - DEBUG - decorators - Sat Aug 13 18:23:53 2022 - функция user_list_request вызвана из функции __init__ из модуля client_pack.transport
+2022-08-13 18:23:53,160 - DEBUG - transport - Запрос контакт листа для пользователя test_cl2
+2022-08-13 18:23:53,160 - DEBUG - transport - Сформирован запрос {'action': 'get_contacts', 'time': 'Sat Aug 13 18:23:53 2022', 'user': 'test_cl2'}
+2022-08-13 18:23:53,719 - DEBUG - transport - Получен ответ {'response': 202, 'data_list': []}
+2022-08-13 18:23:53,719 - DEBUG - decorators - Sat Aug 13 18:23:53 2022 - функция contacts_list_request вызвана из функции __init__ из модуля client_pack.transport
+2022-08-13 18:23:53,719 - DEBUG - transport - Приёмник сообщений с сервера запущен.
+2022-08-13 18:24:00,373 - DEBUG - decorators - Sat Aug 13 18:24:00 2022 - функция create_out_message вызвана из функции transport_close из модуля client_pack.transport
+2022-08-13 18:24:00,931 - DEBUG - transport - Транспорт выключается.
+2022-08-13 18:24:00,931 - DEBUG - decorators - Sat Aug 13 18:24:00 2022 - функция run вызвана из функции _bootstrap_inner из модуля client_pack.transport
+2022-08-13 18:24:01,532 - DEBUG - decorators - Sat Aug 13 18:24:01 2022 - функция transport_close вызвана из функции main из модуля client_pack.transport
+2022-08-13 18:24:02,276 - DEBUG - decorators - Sat Aug 13 18:24:02 2022 - функция create_out_message вызвана из функции transport_close из модуля client_pack.transport
+2022-08-13 18:24:02,277 - DEBUG - transport - Транспорт выключается.
+2022-08-13 18:24:02,877 - DEBUG - decorators - Sat Aug 13 18:24:02 2022 - функция transport_close вызвана из функции main из модуля client_pack.transport
+2022-08-13 18:24:03,362 - DEBUG - decorators - Sat Aug 13 18:24:03 2022 - функция run вызвана из функции _bootstrap_inner из модуля client_pack.transport

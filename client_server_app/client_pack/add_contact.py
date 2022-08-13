@@ -1,8 +1,7 @@
 from sys import path as sys_path
-from sys import argv
 sys_path.append('../')
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QLabel, QComboBox, QPushButton, QApplication
+from PyQt5.QtWidgets import QDialog, QLabel, QComboBox, QPushButton
 from logs import client_log_config
 from logging import getLogger
 
@@ -69,17 +68,3 @@ class AddContactDialog(QDialog):
         else:
             self.client_logger.debug('Выполнено обновление списка пользователя с сервера')
             self.potential_contacts_update()
-
-
-if __name__ == '__main__':
-    from client_storage import ClientStorage
-    my_app = QApplication(argv)
-    database = ClientStorage('test_1')
-    database.add_users(['test_1', 'test_2', 'test_3'])
-
-    class Test1:
-        client_name = 'test_1'
-
-    window = AddContactDialog(database, Test1)
-    window.show()
-    my_app.exec_()

@@ -1,9 +1,7 @@
 from base64 import b64decode, b64encode
 from json import JSONDecodeError
 from sys import path as sys_path
-
 from Cryptodome.PublicKey import RSA
-
 from common.config_path_file import CONFIG_PATH
 sys_path.append('../')
 from PyQt5.QtCore import Qt, pyqtSlot
