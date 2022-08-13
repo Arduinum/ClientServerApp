@@ -1,0 +1,38 @@
+DB_NAME_FILE: server_data.db3
+DB_PATH: /home/arduinum/PycharmProjects/ClientServerApp/client_server_app/server_pack
+ADDR_LISTEN_DEF: 
+ADDR_SERV: addr_server
+PORT_SERV: port_server
+ADDR_DEF: 127.0.0.1
+PORT_DEF: 7777
+MAX_CONNECT: 6
+MAX_MESSAGE_LEN_BYTE: 1024
+ENCODING: utf-8
+ACTION: action
+TIME: time
+USER_NAME: user
+ACCOUNT_NAME: account_name
+PRESENCE: presence
+RESPONSE: response
+ERROR: error
+MESSAGE: message
+MESS_TEXT: mess_text
+ADDRESSER: addresser
+RECIPIENT: recipient
+TARGET: to
+OUT: out
+GET_CONTACTS: get_contacts
+DATA_LIST: data_list
+DATA: bin
+ADD_CONTACT: add_contact
+DEL_CONTACT: del_contact
+GET_USERS: get_users
+PUB_KEY: pub_key
+GET_PUB_KEY: gey_pub_key
+
+# словари ответы
+RESP_200: {response: !!int 200}
+RESP_202: {response: !!int 202, data_list: None}
+RESP_400: {response: !!int 400, error: None}
+RESP_205: {response: !!int 205}
+RESP_511: {response: !!int 511, bin: None}
