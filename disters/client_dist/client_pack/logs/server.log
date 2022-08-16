@@ -1,0 +1,68 @@
+2022-08-13 16:55:25,914 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 16:55:25,975 - DEBUG - descriptor - Получение порта для сервера.
+2022-08-13 16:55:25,975 - INFO - descriptor - Получен порт для работы сервера - 7777
+2022-08-13 16:55:25,975 - INFO - kernel - Старт сервера на адресе 127.0.0.1:7777, использующимся для подключения.
+2022-08-13 17:03:15,121 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 17:03:15,132 - DEBUG - descriptor - Получение порта для сервера.
+2022-08-13 17:03:15,132 - INFO - descriptor - Получен порт для работы сервера - 7777
+2022-08-13 17:03:15,132 - INFO - kernel - Старт сервера на адресе 127.0.0.1:7777, использующимся для подключения.
+2022-08-13 17:26:10,604 - INFO - kernel - Пришёл запрос от клиента на соединение ('127.0.0.1', 59756)
+2022-08-13 17:26:11,205 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'presence', 'time': 'Sat Aug 13 17:26:10 2022', 'user': {'account_name': 'cl1', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA32zLSe1be+fXJG9YSZtH\nr7iW8802IkVKmUzqpSDkLcg0jMM69GFpAr51+LKziWLQvpauWdkxzX/RrwWTOq3X\ngYJ4Rqzu4BpzTzFRm15jykIjyeTl9egHRNX6Mp6/W7ZI2zHa9trCwpTj5A9ll9Im\nuQ9/umhYzhYtsjrne9eDaK5MIImiChSujT3/fGCTL5uZy99YeSgNQs78u8G49O1B\n9IX8XQqjdasUJM6muc8PTZakIXgp7xlCpkS5ZcBD54YLkz8jUb7GEzoNF0o0gLg0\nqT77KuUIQl2kcuTBCinMnQmrZAyA1q48EtermXjxLVIg3jOTTsGC+d6d9J+qIjwu\nKwIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 17:26:11,206 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'presence', 'time': 'Sat Aug 13 17:26:10 2022', 'user': {'account_name': 'cl1', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA32zLSe1be+fXJG9YSZtH\nr7iW8802IkVKmUzqpSDkLcg0jMM69GFpAr51+LKziWLQvpauWdkxzX/RrwWTOq3X\ngYJ4Rqzu4BpzTzFRm15jykIjyeTl9egHRNX6Mp6/W7ZI2zHa9trCwpTj5A9ll9Im\nuQ9/umhYzhYtsjrne9eDaK5MIImiChSujT3/fGCTL5uZy99YeSgNQs78u8G49O1B\n9IX8XQqjdasUJM6muc8PTZakIXgp7xlCpkS5ZcBD54YLkz8jUb7GEzoNF0o0gLg0\nqT77KuUIQl2kcuTBCinMnQmrZAyA1q48EtermXjxLVIg3jOTTsGC+d6d9J+qIjwu\nKwIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 17:26:11,241 - DEBUG - kernel - Неизвестный пользователь отправил - {'response': 400, 'error': 'Пользователь не был зарегистрирован!'}.
+2022-08-13 17:26:11,278 - DEBUG - decorators - Sat Aug 13 17:26:11 2022 - функция user_authorization вызвана из функции message_handler из модуля server_pack.kernel
+2022-08-13 17:26:57,408 - INFO - kernel - Пришёл запрос от клиента на соединение ('127.0.0.1', 59760)
+2022-08-13 17:26:58,009 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'presence', 'time': 'Sat Aug 13 17:26:57 2022', 'user': {'account_name': 'cl1', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA32zLSe1be+fXJG9YSZtH\nr7iW8802IkVKmUzqpSDkLcg0jMM69GFpAr51+LKziWLQvpauWdkxzX/RrwWTOq3X\ngYJ4Rqzu4BpzTzFRm15jykIjyeTl9egHRNX6Mp6/W7ZI2zHa9trCwpTj5A9ll9Im\nuQ9/umhYzhYtsjrne9eDaK5MIImiChSujT3/fGCTL5uZy99YeSgNQs78u8G49O1B\n9IX8XQqjdasUJM6muc8PTZakIXgp7xlCpkS5ZcBD54YLkz8jUb7GEzoNF0o0gLg0\nqT77KuUIQl2kcuTBCinMnQmrZAyA1q48EtermXjxLVIg3jOTTsGC+d6d9J+qIjwu\nKwIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 17:26:58,009 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'presence', 'time': 'Sat Aug 13 17:26:57 2022', 'user': {'account_name': 'cl1', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA32zLSe1be+fXJG9YSZtH\nr7iW8802IkVKmUzqpSDkLcg0jMM69GFpAr51+LKziWLQvpauWdkxzX/RrwWTOq3X\ngYJ4Rqzu4BpzTzFRm15jykIjyeTl9egHRNX6Mp6/W7ZI2zHa9trCwpTj5A9ll9Im\nuQ9/umhYzhYtsjrne9eDaK5MIImiChSujT3/fGCTL5uZy99YeSgNQs78u8G49O1B\n9IX8XQqjdasUJM6muc8PTZakIXgp7xlCpkS5ZcBD54YLkz8jUb7GEzoNF0o0gLg0\nqT77KuUIQl2kcuTBCinMnQmrZAyA1q48EtermXjxLVIg3jOTTsGC+d6d9J+qIjwu\nKwIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 17:26:58,010 - DEBUG - kernel - Неизвестный пользователь отправил - {'response': 400, 'error': 'Пользователь не был зарегистрирован!'}.
+2022-08-13 17:26:58,011 - DEBUG - decorators - Sat Aug 13 17:26:58 2022 - функция user_authorization вызвана из функции message_handler из модуля server_pack.kernel
+2022-08-13 17:27:50,469 - DEBUG - decorators - Sat Aug 13 17:27:50 2022 - функция service_updater_lists вызвана из функции data_saving из модуля server_pack.kernel
+2022-08-13 17:27:58,940 - INFO - kernel - Пришёл запрос от клиента на соединение ('127.0.0.1', 59762)
+2022-08-13 17:27:59,546 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'presence', 'time': 'Sat Aug 13 17:27:58 2022', 'user': {'account_name': 'cl1', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA32zLSe1be+fXJG9YSZtH\nr7iW8802IkVKmUzqpSDkLcg0jMM69GFpAr51+LKziWLQvpauWdkxzX/RrwWTOq3X\ngYJ4Rqzu4BpzTzFRm15jykIjyeTl9egHRNX6Mp6/W7ZI2zHa9trCwpTj5A9ll9Im\nuQ9/umhYzhYtsjrne9eDaK5MIImiChSujT3/fGCTL5uZy99YeSgNQs78u8G49O1B\n9IX8XQqjdasUJM6muc8PTZakIXgp7xlCpkS5ZcBD54YLkz8jUb7GEzoNF0o0gLg0\nqT77KuUIQl2kcuTBCinMnQmrZAyA1q48EtermXjxLVIg3jOTTsGC+d6d9J+qIjwu\nKwIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 17:27:59,547 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'presence', 'time': 'Sat Aug 13 17:27:58 2022', 'user': {'account_name': 'cl1', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA32zLSe1be+fXJG9YSZtH\nr7iW8802IkVKmUzqpSDkLcg0jMM69GFpAr51+LKziWLQvpauWdkxzX/RrwWTOq3X\ngYJ4Rqzu4BpzTzFRm15jykIjyeTl9egHRNX6Mp6/W7ZI2zHa9trCwpTj5A9ll9Im\nuQ9/umhYzhYtsjrne9eDaK5MIImiChSujT3/fGCTL5uZy99YeSgNQs78u8G49O1B\n9IX8XQqjdasUJM6muc8PTZakIXgp7xlCpkS5ZcBD54YLkz8jUb7GEzoNF0o0gLg0\nqT77KuUIQl2kcuTBCinMnQmrZAyA1q48EtermXjxLVIg3jOTTsGC+d6d9J+qIjwu\nKwIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 17:27:59,548 - DEBUG - kernel - Корректное имя пользователя. Старт проверки пароля.
+2022-08-13 17:27:59,549 - DEBUG - kernel - Сообщение аутентификации - {'response': 511, 'bin': 'f11d2823b23c7b8fd433da92442d18cdf3b34536bd9f1cfe7817dacbeec9c0cf0b901594b92398f23433959915d20f96484c54822f0aa77d4494e401e2b44289'}
+2022-08-13 17:27:59,589 - DEBUG - decorators - Sat Aug 13 17:27:59 2022 - функция user_authorization вызвана из функции message_handler из модуля server_pack.kernel
+2022-08-13 17:28:00,189 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'get_users', 'time': 'Sat Aug 13 17:27:59 2022', 'account_name': 'cl1'}
+2022-08-13 17:28:00,793 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'get_contacts', 'time': 'Sat Aug 13 17:28:00 2022', 'user': 'cl1'}
+2022-08-13 17:28:06,206 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'out', 'time': 'Sat Aug 13 17:28:05 2022', 'account_name': 'cl1'}
+2022-08-13 17:28:06,207 - INFO - kernel - Клиент ('127.0.0.1', 59762) отключился от сервера.
+2022-08-13 17:28:06,226 - DEBUG - decorators - Sat Aug 13 17:28:06 2022 - функция dell_client вызвана из функции message_handler из модуля server_pack.kernel
+2022-08-13 17:29:04,811 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 17:29:04,811 - DEBUG - descriptor - Получение порта для сервера.
+2022-08-13 17:29:04,811 - INFO - descriptor - Получен порт для работы сервера - 7777
+2022-08-13 17:29:04,811 - INFO - kernel - Старт сервера на адресе 127.0.0.1:7777, использующимся для подключения.
+2022-08-13 18:22:53,385 - DEBUG - decorators - Sat Aug 13 18:22:53 2022 - функция service_updater_lists вызвана из функции data_saving из модуля server_pack.kernel
+2022-08-13 18:23:25,241 - DEBUG - decorators - Sat Aug 13 18:23:25 2022 - функция service_updater_lists вызвана из функции data_saving из модуля server_pack.kernel
+2022-08-13 18:23:29,476 - DEBUG - decorators - Sat Aug 13 18:23:29 2022 - функция main вызвана из функции <module> из модуля __main__
+2022-08-13 18:23:38,476 - DEBUG - utils - Проверка аргумента порта
+2022-08-13 18:23:38,476 - DEBUG - descriptor - Получение порта для сервера.
+2022-08-13 18:23:38,476 - INFO - descriptor - Получен порт для работы сервера - 7777
+2022-08-13 18:23:38,477 - INFO - kernel - Старт сервера на адресе 127.0.0.1:7777, использующимся для подключения.
+2022-08-13 18:23:51,391 - INFO - kernel - Пришёл запрос от клиента на соединение ('127.0.0.1', 59776)
+2022-08-13 18:23:51,749 - INFO - kernel - Пришёл запрос от клиента на соединение ('127.0.0.1', 59778)
+2022-08-13 18:23:51,749 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'presence', 'time': 'Sat Aug 13 18:23:51 2022', 'user': {'account_name': 'test_cl1', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2c3mIuZPqPsNHqvDmLW+\nHe9TXyBOilhnFTNGJEyw6jujZKyv8OTF6Np4lZjsSTutATCCaSokHKP0Gy5sGh8p\n0M9IT7kd6T3jyPu+kZ+BKqwhocsq0yZbJZqdmy6hioqTQ4d0n/L45lRevrIyAbx3\n80GScfU7do5JNgBcvzj4641/rv553zlJ+0hD6coPKLhlrZkPsj/QBg3uNKWiJ47g\nyUOmJ64BMoZsR5GvKZ68tPZSgSH7WjAiQoolIgB3zXbvld3FEIOjQGBRFWy3Sgo4\n1BPTBkE697A6h7xgRghNFIObCC/eOne3riU5x49lFNsK3brdgM08Tz/Bd341oxHl\n3wIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 18:23:51,749 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'presence', 'time': 'Sat Aug 13 18:23:51 2022', 'user': {'account_name': 'test_cl1', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2c3mIuZPqPsNHqvDmLW+\nHe9TXyBOilhnFTNGJEyw6jujZKyv8OTF6Np4lZjsSTutATCCaSokHKP0Gy5sGh8p\n0M9IT7kd6T3jyPu+kZ+BKqwhocsq0yZbJZqdmy6hioqTQ4d0n/L45lRevrIyAbx3\n80GScfU7do5JNgBcvzj4641/rv553zlJ+0hD6coPKLhlrZkPsj/QBg3uNKWiJ47g\nyUOmJ64BMoZsR5GvKZ68tPZSgSH7WjAiQoolIgB3zXbvld3FEIOjQGBRFWy3Sgo4\n1BPTBkE697A6h7xgRghNFIObCC/eOne3riU5x49lFNsK3brdgM08Tz/Bd341oxHl\n3wIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 18:23:51,767 - DEBUG - kernel - Корректное имя пользователя. Старт проверки пароля.
+2022-08-13 18:23:51,769 - DEBUG - kernel - Сообщение аутентификации - {'response': 511, 'bin': '442f4ae77a8161c5f8e60280d330b9d39f26615123ed13393a1d1afaa1b968a8ebd20432e8b83f8406a2b63d54864d4c8539e0e7c79b5c2d8bb16b0fe492a6ac'}
+2022-08-13 18:23:51,826 - DEBUG - decorators - Sat Aug 13 18:23:51 2022 - функция user_authorization вызвана из функции message_handler из модуля server_pack.kernel
+2022-08-13 18:23:52,427 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'get_users', 'time': 'Sat Aug 13 18:23:51 2022', 'account_name': 'test_cl1'}
+2022-08-13 18:23:52,428 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'presence', 'time': 'Sat Aug 13 18:23:51 2022', 'user': {'account_name': 'test_cl2', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3lu1xH9U0OZRoaZLccdL\nBlqSZFRb//qC+icE7MXosNaKXad3dnw5Ml3XyA+2l+zz0SzVeWKhCkg0gvIgBRps\ncEs4x5sz+MIHIJimu86KCTwNU6vWD0ppl65oqOG5W1Nrdj6Iol0oaHIsveaRK5nS\nDqOoPrCE1OSJwhUU0Zjic9aiuxlXvYxUerePwKIMCfd9HIJzC8NKfST/OgsEN7Zt\nbaNVLRd/quAJ15v/WACEl18CeZiOF2tw9zaWXu82kjKiwspkbm2wPlftvoKeiuzV\nat81iJvCvbcC87VPpm/6Up6ay7GUwchMmtb1O/c4YPQHYSy5j5uKJ4PrOvbjA4gX\n0wIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 18:23:52,428 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'presence', 'time': 'Sat Aug 13 18:23:51 2022', 'user': {'account_name': 'test_cl2', 'pub_key': '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3lu1xH9U0OZRoaZLccdL\nBlqSZFRb//qC+icE7MXosNaKXad3dnw5Ml3XyA+2l+zz0SzVeWKhCkg0gvIgBRps\ncEs4x5sz+MIHIJimu86KCTwNU6vWD0ppl65oqOG5W1Nrdj6Iol0oaHIsveaRK5nS\nDqOoPrCE1OSJwhUU0Zjic9aiuxlXvYxUerePwKIMCfd9HIJzC8NKfST/OgsEN7Zt\nbaNVLRd/quAJ15v/WACEl18CeZiOF2tw9zaWXu82kjKiwspkbm2wPlftvoKeiuzV\nat81iJvCvbcC87VPpm/6Up6ay7GUwchMmtb1O/c4YPQHYSy5j5uKJ4PrOvbjA4gX\n0wIDAQAB\n-----END PUBLIC KEY-----'}}
+2022-08-13 18:23:52,439 - DEBUG - kernel - Корректное имя пользователя. Старт проверки пароля.
+2022-08-13 18:23:52,442 - DEBUG - kernel - Сообщение аутентификации - {'response': 511, 'bin': '9b9c987818bc5a5a238fb4ad306730d44904900fc88940bec12a3fb0d5f34d5516f677013950b0682d7b8ded79daf594849318f25297e308515672a42e4bca5e'}
+2022-08-13 18:23:52,504 - DEBUG - decorators - Sat Aug 13 18:23:52 2022 - функция user_authorization вызвана из функции message_handler из модуля server_pack.kernel
+2022-08-13 18:23:53,105 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'get_contacts', 'time': 'Sat Aug 13 18:23:52 2022', 'user': 'test_cl1'}
+2022-08-13 18:23:53,111 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'get_users', 'time': 'Sat Aug 13 18:23:52 2022', 'account_name': 'test_cl2'}
+2022-08-13 18:23:53,716 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'get_contacts', 'time': 'Sat Aug 13 18:23:53 2022', 'user': 'test_cl2'}
+2022-08-13 18:24:01,531 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'out', 'time': 'Sat Aug 13 18:24:00 2022', 'account_name': 'test_cl2'}
+2022-08-13 18:24:01,532 - INFO - kernel - Клиент ('127.0.0.1', 59778) отключился от сервера.
+2022-08-13 18:24:01,549 - DEBUG - decorators - Sat Aug 13 18:24:01 2022 - функция dell_client вызвана из функции message_handler из модуля server_pack.kernel
+2022-08-13 18:24:02,751 - DEBUG - kernel - Обработка сообщения от клиента - {'action': 'out', 'time': 'Sat Aug 13 18:24:02 2022', 'account_name': 'test_cl1'}
+2022-08-13 18:24:02,752 - INFO - kernel - Клиент ('127.0.0.1', 59776) отключился от сервера.
+2022-08-13 18:24:02,765 - DEBUG - decorators - Sat Aug 13 18:24:02 2022 - функция dell_client вызвана из функции message_handler из модуля server_pack.kernel
+2022-08-13 18:24:05,904 - DEBUG - decorators - Sat Aug 13 18:24:05 2022 - функция main вызвана из функции <module> из модуля __main__
+2022-08-15 21:54:20,465 - DEBUG - utils - Проверка аргумента порта
+2022-08-15 21:54:20,466 - DEBUG - descriptor - Получение порта для сервера.
+2022-08-15 21:54:20,466 - INFO - descriptor - Получен порт для работы сервера - 7777
+2022-08-15 21:54:20,466 - INFO - kernel - Старт сервера на адресе 127.0.0.1:7777, использующимся для подключения.
